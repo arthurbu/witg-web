@@ -1,0 +1,408 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Просмотр флейты - WITG</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+        
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            min-height: 100vh;
+            padding: 20px;
+            color: #333;
+        }
+        
+        .container {
+            max-width: 1000px;
+            margin: 0 auto;
+            background: white;
+            border-radius: 15px;
+            box-shadow: 0 10px 30px rgba(0,0,0,0.3);
+            overflow: hidden;
+        }
+        
+        .header {
+            background: linear-gradient(135deg, #4CAF50, #2E7D32);
+            color: white;
+            padding: 20px;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+        
+        .header h1 {
+            display: flex;
+            align-items: center;
+            gap: 10px;
+        }
+        
+        .back-btn {
+            color: white;
+            text-decoration: none;
+            padding: 8px 15px;
+            background: rgba(255,255,255,0.2);
+            border-radius: 5px;
+            transition: background 0.3s;
+        }
+        
+        .back-btn:hover {
+            background: rgba(255,255,255,0.3);
+        }
+        
+        .content {
+            padding: 30px;
+        }
+        
+        .flute-info {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+            gap: 20px;
+            margin-bottom: 30px;
+        }
+        
+        .info-card {
+            background: #f8f9fa;
+            border-radius: 10px;
+            padding: 20px;
+            border: 2px solid #e9ecef;
+        }
+        
+        .info-card h3 {
+            color: #2E7D32;
+            margin-bottom: 15px;
+            padding-bottom: 10px;
+            border-bottom: 1px solid #dee2e6;
+        }
+        
+        .info-row {
+            display: flex;
+            justify-content: space-between;
+            padding: 8px 0;
+            border-bottom: 1px dashed #dee2e6;
+        }
+        
+        .info-label {
+            color: #666;
+        }
+        
+        .info-value {
+            font-weight: 600;
+        }
+        
+        .holes-section {
+            margin-top: 30px;
+        }
+        
+        .holes-section h2 {
+            color: #2E7D32;
+            margin-bottom: 20px;
+        }
+        
+        .holes-table {
+            width: 100%;
+            border-collapse: collapse;
+            background: white;
+            border-radius: 10px;
+            overflow: hidden;
+            box-shadow: 0 5px 15px rgba(0,0,0,0.1);
+        }
+        
+        .holes-table th {
+            background: linear-gradient(135deg, #4CAF50, #2E7D32);
+            color: white;
+            padding: 15px;
+            text-align: left;
+        }
+        
+        .holes-table td {
+            padding: 15px;
+            border-bottom: 1px solid #e9ecef;
+        }
+        
+        .holes-table tr:hover {
+            background: #f8f9fa;
+        }
+        
+        .actions {
+            display: flex;
+            gap: 15px;
+            margin-top: 30px;
+            flex-wrap: wrap;
+        }
+        
+        .btn {
+            padding: 12px 25px;
+            border: none;
+            border-radius: 8px;
+            font-size: 1em;
+            font-weight: 600;
+            cursor: pointer;
+            transition: all 0.3s;
+            display: inline-flex;
+            align-items: center;
+            gap: 8px;
+            text-decoration: none;
+        }
+        
+        .btn-primary {
+            background: linear-gradient(135deg, #4CAF50, #2E7D32);
+            color: white;
+        }
+        
+        .btn-primary:hover {
+            transform: translateY(-3px);
+            box-shadow: 0 5px 15px rgba(76, 175, 80, 0.4);
+        }
+        
+        .btn-secondary {
+            background: #6c757d;
+            color: white;
+        }
+        
+        .btn-secondary:hover {
+            background: #5a6268;
+        }
+        
+        .btn-danger {
+            background: #dc3545;
+            color: white;
+        }
+        
+        .btn-danger:hover {
+            background: #c82333;
+        }
+        
+        .svg-preview {
+            margin-top: 30px;
+            text-align: center;
+            padding: 20px;
+            background: #f8f9fa;
+            border-radius: 10px;
+        }
+        
+        .svg-preview img {
+            max-width: 100%;
+            border: 1px solid #dee2e6;
+            border-radius: 5px;
+        }
+        
+        .loading {
+            text-align: center;
+            padding: 40px;
+            color: #666;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <div class="header">
+            <h1>👁️ Просмотр флейты</h1>
+            <a href="/" class="back-btn">← Назад к списку</a>
+        </div>
+        
+        <div class="content">
+            <div id="loading" class="loading">
+                Загрузка данных флейты...
+            </div>
+            
+            <div id="flute-content" style="display: none;">
+                <div class="flute-info" id="flute-info">
+                    <!-- Данные загружаются через JS -->
+                </div>
+                
+                <div class="holes-section">
+                    <h2>🎵 Отверстия</h2>
+                    <table class="holes-table">
+                        <thead>
+                            <tr>
+                                <th>#</th>
+                                <th>Нота</th>
+                                <th>Позиция (мм)</th>
+                                <th>Диаметр (мм)</th>
+                                <th>Угол (°)</th>
+                                <th>Статус</th>
+                            </tr>
+                        </thead>
+                        <tbody id="holes-list">
+                            <!-- Данные загружаются через JS -->
+                        </tbody>
+                    </table>
+                </div>
+                
+                <div class="svg-preview" id="svg-preview">
+                    <h3>📐 Графический шаблон</h3>
+                    <p>SVG шаблон будет сгенерирован после расчета</p>
+                </div>
+                
+                <div class="actions">
+                    <button class="btn btn-primary" onclick="downloadTemplate()">
+                        📥 Скачать SVG шаблон
+                    </button>
+                    <button class="btn btn-secondary" onclick="recalculate()">
+                        🔄 Пересчитать отверстия
+                    </button>
+                    <button class="btn btn-danger" onclick="deleteFlute()">
+                        🗑️ Удалить флейту
+                    </button>
+                </div>
+            </div>
+        </div>
+    </div>
+    
+    <script>
+        // Получаем ID флейты из URL
+        const pathParts = window.location.pathname.split('/');
+        const fluteId = pathParts[pathParts.length - 1];
+        
+        // Загружаем данные флейты
+        async function loadFluteData() {
+            try {
+                const response = await fetch(`/api/flutes/${fluteId}`);
+                if (!response.ok) {
+                    throw new Error('Флейта не найдена');
+                }
+                
+                const flute = await response.json();
+                
+                // Показываем контент
+                document.getElementById('loading').style.display = 'none';
+                document.getElementById('flute-content').style.display = 'block';
+                
+                // Заполняем информацию о флейте
+                document.getElementById('flute-info').innerHTML = `
+                    <div class="info-card">
+                        <h3>Основные параметры</h3>
+                        <div class="info-row">
+                            <span class="info-label">Название:</span>
+                            <span class="info-value">${flute.name}</span>
+                        </div>
+                        <div class="info-row">
+                            <span class="info-label">Тональность:</span>
+                            <span class="info-value">${flute.key}</span>
+                        </div>
+                        <div class="info-row">
+                            <span class="info-label">Лад:</span>
+                            <span class="info-value">${flute.scale || 'natural_minor'}</span>
+                        </div>
+                        <div class="info-row">
+                            <span class="info-label">Длина трубки:</span>
+                            <span class="info-value">${flute.tube_length} мм</span>
+                        </div>
+                        <div class="info-row">
+                            <span class="info-label">Количество отверстий:</span>
+                            <span class="info-value">${flute.hole_count || 6}</span>
+                        </div>
+                        <div class="info-row">
+                            <span class="info-label">Статус:</span>
+                            <span class="info-value">
+                                ${flute.is_verified ? '✅ Проверена' : '📝 Черновик'}
+                            </span>
+                        </div>
+                    </div>
+                    
+                    <div class="info-card">
+                        <h3>Компоненты</h3>
+                        ${flute.mouthpiece ? `
+                            <div class="info-row">
+                                <span class="info-label">Мундштук:</span>
+                                <span class="info-value">${flute.mouthpiece.name}</span>
+                            </div>
+                        ` : ''}
+                        ${flute.tube ? `
+                            <div class="info-row">
+                                <span class="info-label">Трубка:</span>
+                                <span class="info-value">${flute.tube.name}</span>
+                            </div>
+                        ` : ''}
+                        ${flute.bell ? `
+                            <div class="info-row">
+                                <span class="info-label">Раструб:</span>
+                                <span class="info-value">${flute.bell.name}</span>
+                            </div>
+                        ` : ''}
+                        <div class="info-row">
+                            <span class="info-label">Создана:</span>
+                            <span class="info-value">
+                                ${new Date(flute.created_at).toLocaleString('ru-RU')}
+                            </span>
+                        </div>
+                    </div>
+                `;
+                
+                // Заполняем таблицу отверстий
+                const holesList = document.getElementById('holes-list');
+                holesList.innerHTML = '';
+                
+                if (flute.holes && flute.holes.length > 0) {
+                    flute.holes.forEach((hole, index) => {
+                        const row = document.createElement('tr');
+                        row.innerHTML = `
+                            <td>${index + 1}</td>
+                            <td><strong>${hole.note || '?'}</strong></td>
+                            <td>${hole.position ? hole.position.toFixed(1) : '?'}</td>
+                            <td>${hole.diameter ? hole.diameter.toFixed(1) : '?'}</td>
+                            <td>${hole.angle || 0}°</td>
+                            <td>${hole.is_calibrated ? '✅ Калибровано' : '⚠️ Расчетное'}</td>
+                        `;
+                        holesList.appendChild(row);
+                    });
+                } else {
+                    holesList.innerHTML = `
+                        <tr>
+                            <td colspan="6" style="text-align: center; padding: 20px;">
+                                Отверстия еще не рассчитаны
+                            </td>
+                        </tr>
+                    `;
+                }
+                
+            } catch (error) {
+                document.getElementById('loading').innerHTML = `
+                    <div style="color: #d32f2f; text-align: center;">
+                        <h3>❌ Ошибка загрузки</h3>
+                        <p>${error.message}</p>
+                        <a href="/" class="btn btn-primary" style="margin-top: 20px;">
+                            ← Вернуться к списку
+                        </a>
+                    </div>
+                `;
+            }
+        }
+        
+        // Функции действий
+        function downloadTemplate() {
+            window.open(`/api/flutes/${fluteId}/template`, '_blank');
+        }
+        
+        function recalculate() {
+            alert('Функция пересчета будет добавлена позже');
+        }
+        
+        function deleteFlute() {
+            if (confirm('Вы уверены, что хотите удалить эту флейту?')) {
+                fetch(`/api/flutes/${fluteId}`, {
+                    method: 'DELETE'
+                })
+                .then(response => {
+                    if (response.ok) {
+                        alert('Флейта удалена');
+                        window.location.href = '/';
+                    } else {
+                        alert('Ошибка при удалении');
+                    }
+                });
+            }
+        }
+        
+        // Загружаем данные при загрузке страницы
+        document.addEventListener('DOMContentLoaded', loadFluteData);
+    </script>
+</body>
+</html>
