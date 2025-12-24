@@ -95,7 +95,7 @@
         
         .components-grid {
             display: grid;
-            grid-template-columns: repeat(auto-fill, minmax(300px, 1fr));
+            grid-template-columns: repeat(auto-fill, minmax(350px, 1fr));
             gap: 20px;
             margin-bottom: 30px;
         }
@@ -106,6 +106,7 @@
             padding: 20px;
             border: 2px solid #e9ecef;
             transition: all 0.3s;
+            position: relative;
         }
         
         .component-card:hover {
@@ -139,6 +140,34 @@
             color: #2E7D32;
         }
         
+        .measurement-status {
+            position: absolute;
+            top: 15px;
+            right: 15px;
+            padding: 4px 10px;
+            border-radius: 15px;
+            font-size: 0.8em;
+            font-weight: 600;
+        }
+        
+        .status-complete {
+            background: #d4edda;
+            color: #155724;
+            border: 1px solid #c3e6cb;
+        }
+        
+        .status-partial {
+            background: #fff3cd;
+            color: #856404;
+            border: 1px solid #ffeaa7;
+        }
+        
+        .status-required {
+            background: #f8d7da;
+            color: #721c24;
+            border: 1px solid #f5c6cb;
+        }
+        
         .form-section {
             background: #f8f9fa;
             border-radius: 10px;
@@ -170,10 +199,20 @@
             margin-bottom: 8px;
             font-weight: 600;
             color: #495057;
+            display: flex;
+            align-items: center;
+            gap: 5px;
+        }
+        
+        .required::after {
+            content: "*";
+            color: #dc3545;
+            margin-left: 4px;
         }
         
         .form-group input,
-        .form-group select {
+        .form-group select,
+        .form-group textarea {
             padding: 12px 15px;
             border: 2px solid #ced4da;
             border-radius: 8px;
@@ -182,10 +221,88 @@
         }
         
         .form-group input:focus,
-        .form-group select:focus {
+        .form-group select:focus,
+        .form-group textarea:focus {
             outline: none;
             border-color: #4CAF50;
             box-shadow: 0 0 0 3px rgba(76, 175, 80, 0.1);
+        }
+        
+        .form-group small {
+            margin-top: 5px;
+            color: #6c757d;
+            font-size: 0.85em;
+        }
+        
+        .measurement-section {
+            background: white;
+            border-radius: 8px;
+            padding: 15px;
+            margin-top: 10px;
+            border: 1px solid #dee2e6;
+        }
+        
+        .measurement-section h4 {
+            color: #2196F3;
+            margin-bottom: 10px;
+            display: flex;
+            align-items: center;
+            gap: 8px;
+        }
+        
+        .measurement-section p {
+            color: #666;
+            font-size: 0.9em;
+            margin-bottom: 10px;
+            padding: 8px;
+            background: #e3f2fd;
+            border-radius: 5px;
+            border-left: 4px solid #2196F3;
+        }
+        
+        .calibration-result {
+            margin-top: 15px;
+            padding: 12px;
+            background: #d4edda;
+            border-radius: 5px;
+            border: 1px solid #c3e6cb;
+            text-align: center;
+        }
+        
+        .calibration-result h5 {
+            color: #155724;
+            margin-bottom: 5px;
+        }
+        
+        .calibration-result p {
+            font-size: 1.2em;
+            font-weight: bold;
+            color: #2E7D32;
+            margin: 5px 0;
+        }
+        
+        .calculation-section {
+            margin-top: 20px;
+            padding: 15px;
+            background: #fff3cd;
+            border-radius: 8px;
+            border: 1px solid #ffeaa7;
+        }
+        
+        .calculation-section h4 {
+            color: #856404;
+            margin-bottom: 10px;
+        }
+        
+        .calculation-result {
+            font-weight: bold;
+            color: #856404;
+            padding: 8px;
+            background: white;
+            border-radius: 5px;
+            border: 1px solid #ffd54f;
+            text-align: center;
+            margin-top: 10px;
         }
         
         .btn {
@@ -229,10 +346,20 @@
             background: #c82333;
         }
         
+        .btn-info {
+            background: #17a2b8;
+            color: white;
+        }
+        
+        .btn-info:hover {
+            background: #138496;
+        }
+        
         .actions {
             display: flex;
             gap: 15px;
             margin-top: 20px;
+            flex-wrap: wrap;
         }
         
         .loading {
@@ -258,6 +385,72 @@
             margin-top: 10px;
             display: none;
         }
+        
+        .warning {
+            color: #856404;
+            padding: 10px;
+            background: #fff3cd;
+            border-radius: 5px;
+            margin-top: 10px;
+            border: 1px solid #ffeaa7;
+        }
+        
+        .parameter-category {
+            margin: 20px 0;
+            padding: 15px;
+            background: white;
+            border-radius: 8px;
+            border: 1px solid #dee2e6;
+        }
+        
+        .parameter-category h4 {
+            color: #2E7D32;
+            margin-bottom: 15px;
+            padding-bottom: 8px;
+            border-bottom: 2px solid #e9ecef;
+        }
+        
+        .input-with-unit {
+            display: flex;
+            align-items: center;
+            gap: 10px;
+        }
+        
+        .input-with-unit input {
+            flex: 1;
+        }
+        
+        .unit {
+            min-width: 50px;
+            color: #666;
+            font-weight: 500;
+        }
+        
+        .parameter-table {
+            width: 100%;
+            border-collapse: collapse;
+            margin-top: 10px;
+        }
+        
+        .parameter-table th,
+        .parameter-table td {
+            padding: 10px;
+            text-align: left;
+            border-bottom: 1px solid #dee2e6;
+        }
+        
+        .parameter-table th {
+            background: #f8f9fa;
+            font-weight: 600;
+            color: #495057;
+        }
+        
+        .parameter-table input {
+            width: 100%;
+            padding: 8px;
+            border: 1px solid #ced4da;
+            border-radius: 4px;
+        }
     </style>
 </head>
 <body>
@@ -265,7 +458,7 @@
         <header>
             <a href="/" class="back-btn">← Назад</a>
             <h1>🔧 Управление компонентами</h1>
-            <p>Базы мундштуков, трубок и раструбов</p>
+            <p>Базы мундштуков, трубок и раструбов с акустическими параметрами</p>
         </header>
         
         <div class="content">
@@ -277,65 +470,174 @@
             
             <!-- Мундштуки -->
             <div id="mouthpieces-tab" class="tab-content active">
+                <div class="warning">
+                    <strong>⚠️ Внимание!</strong> Для точных расчетов необходимы акустические измерения.
+                    Без них позиции отверстий будут приблизительными.
+                </div>
+                
                 <div class="form-section">
                     <h3>➕ Добавить новый мундштук</h3>
-                    <div class="form-row">
-                        <div class="form-group">
-                            <label for="mp-name">Название</label>
-                            <input type="text" id="mp-name" placeholder="Например: Yamaha C5 + Boch3">
+                    
+                    <div class="parameter-category">
+                        <h4>📏 Геометрические параметры (измерять штангенциркулем)</h4>
+                        <div class="form-row">
+                            <div class="form-group">
+                                <label for="mp-name" class="required">Название мундштука</label>
+                                <input type="text" id="mp-name" placeholder="Например: Clarinet_Bb_std">
+                            </div>
+                            <div class="form-group">
+                                <label for="mp-type" class="required">Тип мундштука</label>
+                                <select id="mp-type">
+                                    <option value="clarinet">Кларнет</option>
+                                    <option value="alto_sax">Альт саксофон</option>
+                                    <option value="tenor_sax">Тенор саксофон</option>
+                                    <option value="soprano_sax">Сопрано саксофон</option>
+                                    <option value="bass_clarinet">Басс кларнет</option>
+                                    <option value="native">Нативный (дудикс)</option>
+                                    <option value="flute">Поперечная флейта</option>
+                                    <option value="recorder">Рекордер</option>
+                                </select>
+                            </div>
+                            <div class="form-group">
+                                <label for="mp-brand">Производитель</label>
+                                <input type="text" id="mp-brand" placeholder="Yamaha, Selmer, Vandoren, Bari">
+                            </div>
                         </div>
-                        <div class="form-group">
-                            <label for="mp-type">Тип</label>
-                            <select id="mp-type">
-                                <option value="clarinet">Кларнетный</option>
-                                <option value="sax">Саксофонный</option>
-                                <option value="native">Нативный</option>
-                                <option value="flute">Флейтовый</option>
-                            </select>
+                        
+                        <div class="form-row">
+                            <div class="form-group">
+                                <label for="mp-d-tip" class="required">Диаметр у трости (d_tip), мм</label>
+                                <div class="input-with-unit">
+                                    <input type="number" id="mp-d-tip" step="0.01" min="8" max="30" value="13.5">
+                                    <span class="unit">мм</span>
+                                </div>
+                                <small>Внутренний диаметр там, где лежит трость</small>
+                            </div>
+                            <div class="form-group">
+                                <label for="mp-d-out" class="required">Диаметр выхода (d_out), мм</label>
+                                <div class="input-with-unit">
+                                    <input type="number" id="mp-d-out" step="0.01" min="10" max="40" value="14.7">
+                                    <span class="unit">мм</span>
+                                </div>
+                                <small>Внутренний диаметр на конце (вставляется в трубку)</small>
+                            </div>
+                            <div class="form-group">
+                                <label for="mp-L-m" class="required">Длина акустического конуса (L_m), мм</label>
+                                <div class="input-with-unit">
+                                    <input type="number" id="mp-L-m" step="0.1" min="30" max="200" value="75.0">
+                                    <span class="unit">мм</span>
+                                </div>
+                                <small>От кончика трости до начала цилиндрической части</small>
+                            </div>
                         </div>
-                        <div class="form-group">
-                            <label for="mp-brand">Производитель</label>
-                            <input type="text" id="mp-brand" placeholder="Yamaha, Selmer и т.д.">
+                        
+                        <div class="form-row">
+                            <div class="form-group">
+                                <label for="mp-L-cyl">Длина цилиндрической части (L_cyl), мм</label>
+                                <div class="input-with-unit">
+                                    <input type="number" id="mp-L-cyl" step="0.1" min="0" max="100" value="0.0">
+                                    <span class="unit">мм</span>
+                                </div>
+                                <small>Если есть цилиндрический участок после конуса</small>
+                            </div>
+                            <div class="form-group">
+                                <label for="mp-baffle">Тип свода (Baffle)</label>
+                                <select id="mp-baffle">
+                                    <option value="low_straight">Низкий прямой</option>
+                                    <option value="high_straight">Высокий прямой</option>
+                                    <option value="low_step">Низкий ступенчатый</option>
+                                    <option value="high_step">Высокий ступенчатый</option>
+                                    <option value="curved">Изогнутый</option>
+                                    <option value="rollover">Roll-over baffle</option>
+                                </select>
+                            </div>
+                            <div class="form-group">
+                                <label for="mp-chamber">Глубина камеры, мм</label>
+                                <div class="input-with-unit">
+                                    <input type="number" id="mp-chamber" step="0.1" min="5" max="50" value="15.0">
+                                    <span class="unit">мм</span>
+                                </div>
+                                <small>От окна до задней стенки</small>
+                            </div>
                         </div>
                     </div>
                     
-                    <div class="form-row">
-                        <div class="form-group">
-                            <label for="mp-inner-diameter">Внутренний диаметр (мм)</label>
-                            <input type="number" id="mp-inner-diameter" step="0.1" value="14.7">
+                    <div class="parameter-category">
+                        <h4>🎵 Акустические измерения (ОБЯЗАТЕЛЬНО для точных расчетов!)</h4>
+                        
+                        <div class="measurement-section">
+                            <h4>📐 Измерение энд-коррекции (δ_m)</h4>
+                            <p><strong>Методика:</strong> Возьмите калибровочную трубку длиной 400мм (L_calib) с внутренним диаметром 13мм (d_calib), установите мундштук и измерьте основную частоту (f_meas).</p>
+                            
+                            <div class="form-row">
+                                <div class="form-group">
+                                    <label for="mp-L-calib">Длина калибровочной трубки</label>
+                                    <div class="input-with-unit">
+                                        <input type="number" id="mp-L-calib" step="0.1" value="400.0">
+                                        <span class="unit">мм</span>
+                                    </div>
+                                </div>
+                                <div class="form-group">
+                                    <label for="mp-d-calib">Диаметр калибровочной трубки</label>
+                                    <div class="input-with-unit">
+                                        <input type="number" id="mp-d-calib" step="0.01" value="13.0">
+                                        <span class="unit">мм</span>
+                                    </div>
+                                </div>
+                                <div class="form-group">
+                                    <label for="mp-f-meas" class="required">Измеренная частота (f_meas)</label>
+                                    <div class="input-with-unit">
+                                        <input type="number" id="mp-f-meas" step="0.1" min="100" max="500" value="320.0">
+                                        <span class="unit">Гц</span>
+                                    </div>
+                                    <small>Основной тон на калибровочной трубке</small>
+                                </div>
+                            </div>
+                            
+                            <div class="actions">
+                                <button class="btn btn-info" onclick="calculateEndCorrection()">
+                                    📐 Рассчитать энд-коррекцию
+                                </button>
+                                <button class="btn btn-secondary" onclick="autoFillClarinetCalibration()">
+                                    🎺 Заполнить для кларнета
+                                </button>
+                                <button class="btn btn-secondary" onclick="autoFillSaxCalibration()">
+                                    🎷 Заполнить для саксофона
+                                </button>
+                            </div>
+                            
+                            <div id="end-correction-result" class="calibration-result" style="display: none;">
+                                <h5>🎯 Результаты расчета</h5>
+                                <p>Эффективная длина (L_eff): <span id="L-eff-value">0</span> мм</p>
+                                <p>Энд-коррекция (δ_m): <span id="delta-m-value">0</span> мм</p>
+                                <small>Это ключевое число включает ВСЮ акустику мундштука</small>
+                                <button class="btn btn-secondary" onclick="useCalculatedDeltaM()" style="margin-top: 10px;">
+                                    ✅ Использовать это значение
+                                </button>
+                            </div>
                         </div>
-                        <div class="form-group">
-                            <label for="mp-outer-diameter">Внешний диаметр (мм)</label>
-                            <input type="number" id="mp-outer-diameter" step="0.1" value="16.0">
-                        </div>
-                        <div class="form-group">
-                            <label for="mp-length">Длина (мм)</label>
-                            <input type="number" id="mp-length" step="0.1" value="85.0">
-                        </div>
-                    </div>
-                    
-                    <div class="form-row">
-                        <div class="form-group">
-                            <label for="mp-end-correction">Энд-коррекция (мм)</label>
-                            <input type="number" id="mp-end-correction" step="0.1" value="15.0">
-                            <small>Дополнительная длина для акустического расчета</small>
-                        </div>
-                        <div class="form-group">
-                            <label for="mp-embouchure">Тип амбушюра</label>
-                            <select id="mp-embouchure">
-                                <option value="rounded">Закругленный</option>
-                                <option value="flat">Плоский</option>
-                                <option value="v-shaped">V-образный</option>
-                            </select>
-                        </div>
-                        <div class="form-group">
-                            <label for="mp-material">Материал</label>
-                            <select id="mp-material">
-                                <option value="plastic">Пластик</option>
-                                <option value="ebonite">Эбонит</option>
-                                <option value="metal">Металл</option>
-                                <option value="wood">Дерево</option>
-                            </select>
+                        
+                        <div class="form-row">
+                            <div class="form-group">
+                                <label for="mp-delta-m" class="required">Энд-коррекция (δ_m), мм</label>
+                                <div class="input-with-unit">
+                                    <input type="number" id="mp-delta-m" step="0.01" min="0" max="200" value="68.0">
+                                    <span class="unit">мм</span>
+                                </div>
+                                <small>Ключевой параметр! Рассчитывается выше или вводится вручную</small>
+                            </div>
+                            <div class="form-group">
+                                <label for="mp-temperature">Температура измерения</label>
+                                <div class="input-with-unit">
+                                    <input type="number" id="mp-temperature" step="0.1" min="15" max="30" value="20.0">
+                                    <span class="unit">°C</span>
+                                </div>
+                                <small>Температура воздуха при измерении</small>
+                            </div>
+                            <div class="form-group">
+                                <label for="mp-notes">Примечания по мундштуку</label>
+                                <textarea id="mp-notes" rows="3" placeholder="Особенности, рекомендованные трости, замеченные проблемы..."></textarea>
+                            </div>
                         </div>
                     </div>
                     
@@ -344,7 +646,7 @@
                     
                     <div class="actions">
                         <button class="btn btn-primary" onclick="addMouthpiece()">
-                            ✅ Добавить мундштук
+                            ✅ Сохранить мундштук с параметрами
                         </button>
                         <button class="btn btn-secondary" onclick="resetMouthpieceForm()">
                             🔄 Сбросить форму
@@ -363,62 +665,256 @@
             
             <!-- Трубки -->
             <div id="tubes-tab" class="tab-content">
+                <div class="warning">
+                    <strong>⚠️ Внимание!</strong> Для точного расчета скорости звука в материале рекомендуется выполнить калибровку!
+                </div>
+                
                 <div class="form-section">
                     <h3>➕ Добавить новую трубку</h3>
-                    <div class="form-row">
-                        <div class="form-group">
-                            <label for="tube-name">Название</label>
-                            <input type="text" id="tube-name" placeholder="Например: PVC 20mm">
+                    
+                    <div class="parameter-category">
+                        <h4>📏 Геометрические параметры</h4>
+                        <div class="form-row">
+                            <div class="form-group">
+                                <label for="tube-name" class="required">Название трубки</label>
+                                <input type="text" id="tube-name" placeholder="Например: Aluminum_6061_20mm">
+                            </div>
+                            <div class="form-group">
+                                <label for="tube-material" class="required">Материал</label>
+                                <select id="tube-material">
+                                    <option value="aluminum">Алюминий</option>
+                                    <option value="steel">Сталь</option>
+                                    <option value="bronze">Бронза</option>
+                                    <option value="brass">Латунь</option>
+                                    <option value="pp">PP (Полипропилен)</option>
+                                    <option value="petg">PETG</option>
+                                    <option value="glass">Стекло</option>
+                                    <option value="wood">Дерево</option>
+                                    <option value="rubber">Резина (Шланг)</option>
+                                    <option value="pvc">PVC</option>
+                                    <option value="carbon">Карбон</option>
+                                    <option value="copper">Медь</option>
+                                    <option value="acrylic">Акрил</option>
+                                    <option value="bamboo">Бамбук</option>
+                                </select>
+                            </div>
+                            <div class="form-group">
+                                <label for="tube-length">Стандартная длина</label>
+                                <div class="input-with-unit">
+                                    <input type="number" id="tube-length" step="1" value="500">
+                                    <span class="unit">мм</span>
+                                </div>
+                            </div>
                         </div>
-                        <div class="form-group">
-                            <label for="tube-material">Материал</label>
-                            <select id="tube-material">
-                                <option value="pvc">PVC</option>
-                                <option value="bamboo">Бамбук</option>
-                                <option value="metal">Металл</option>
-                                <option value="wood">Дерево</option>
-                                <option value="carbon">Карбон</option>
-                            </select>
+                        
+                        <div class="form-row">
+                            <div class="form-group">
+                                <label for="tube-d-in" class="required">Внутренний диаметр (d_in)</label>
+                                <div class="input-with-unit">
+                                    <input type="number" id="tube-d-in" step="0.01" min="1" max="100" value="20.0">
+                                    <span class="unit">мм</span>
+                                </div>
+                                <small>ГЛАВНЫЙ ПАРАМЕТР! Измерять в нескольких точках</small>
+                            </div>
+                            <div class="form-group">
+                                <label for="tube-d-out" class="required">Внешний диаметр (d_out)</label>
+                                <div class="input-with-unit">
+                                    <input type="number" id="tube-d-out" step="0.01" min="2" max="110" value="22.0">
+                                    <span class="unit">мм</span>
+                                </div>
+                            </div>
+                            <div class="form-group">
+                                <label for="tube-wall">Толщина стенки (t_wall)</label>
+                                <div class="input-with-unit">
+                                    <input type="number" id="tube-wall" step="0.01" min="0.1" max="10" value="1.0" readonly>
+                                    <span class="unit">мм</span>
+                                </div>
+                                <small>Вычисляется автоматически: (d_out - d_in)/2</small>
+                            </div>
                         </div>
-                        <div class="form-group">
-                            <label for="tube-form">Форма сечения</label>
-                            <select id="tube-form">
-                                <option value="round">Круглая</option>
-                                <option value="oval">Овальная</option>
-                                <option value="rectangular">Прямоугольная</option>
-                            </select>
+                        
+                        <div class="form-row">
+                            <div class="form-group">
+                                <label for="tube-taper">Конусность</label>
+                                <div class="input-with-unit">
+                                    <input type="number" id="tube-taper" step="0.0001" min="-0.1" max="0.1" value="0.0">
+                                    <span class="unit">мм/мм</span>
+                                </div>
+                                <small>(d_in_конца - d_in_начала) / длина. 0 = цилиндр</small>
+                            </div>
+                            <div class="form-group">
+                                <label for="tube-roughness">Шероховатость стенок</label>
+                                <select id="tube-roughness">
+                                    <option value="very_smooth">Очень гладкая</option>
+                                    <option value="smooth">Гладкая</option>
+                                    <option value="medium">Средняя</option>
+                                    <option value="rough">Шероховатая</option>
+                                    <option value="very_rough">Очень шероховатая</option>
+                                </select>
+                            </div>
                         </div>
                     </div>
                     
-                    <div class="form-row">
-                        <div class="form-group">
-                            <label for="tube-inner-diameter">Внутренний диаметр (мм)</label>
-                            <input type="number" id="tube-inner-diameter" step="0.1" value="20.0">
+                    <div class="parameter-category">
+                        <h4>🎵 Калибровка трубки (рекомендуется для точности!)</h4>
+                        
+                        <div class="measurement-section">
+                            <h4>🔊 Измерение собственной частоты трубки</h4>
+                            <p><strong>Методика:</strong> Заглушите оба конца трубки плотно, постучите по ней и измерьте частоту звука (f_tube). Это определит эффективную скорость звука в данном материале.</p>
+                            
+                            <div class="form-row">
+                                <div class="form-group">
+                                    <label for="tube-f-tube">Измеренная частота (f_tube)</label>
+                                    <div class="input-with-unit">
+                                        <input type="number" id="tube-f-tube" step="0.1" min="50" max="2000" value="">
+                                        <span class="unit">Гц</span>
+                                    </div>
+                                </div>
+                                <div class="form-group">
+                                    <label for="tube-L-total">Длина трубки при измерении</label>
+                                    <div class="input-with-unit">
+                                        <input type="number" id="tube-L-total" step="0.1" value="">
+                                        <span class="unit">мм</span>
+                                    </div>
+                                </div>
+                                <div class="form-group">
+                                    <label for="tube-temp">Температура при измерении</label>
+                                    <div class="input-with-unit">
+                                        <input type="number" id="tube-temp" step="0.1" min="15" max="30" value="20.0">
+                                        <span class="unit">°C</span>
+                                    </div>
+                                </div>
+                            </div>
+                            
+                            <div class="actions">
+                                <button class="btn btn-info" onclick="calculateTubeVelocity()">
+                                    📐 Рассчитать эффективную скорость звука
+                                </button>
+                            </div>
+                            
+                            <div id="tube-velocity-result" class="calibration-result" style="display: none;">
+                                <h5>🎯 Результаты расчета</h5>
+                                <p>Эффективная скорость звука: <span id="v-eff-value">0</span> см/с</p>
+                                <p>Отношение к воздуху: <span id="v-ratio-value">0</span></p>
+                                <button class="btn btn-secondary" onclick="useCalculatedVelocity()" style="margin-top: 10px;">
+                                    ✅ Использовать это значение
+                                </button>
+                            </div>
                         </div>
-                        <div class="form-group">
-                            <label for="tube-outer-diameter">Внешний диаметр (мм)</label>
-                            <input type="number" id="tube-outer-diameter" step="0.1" value="22.0">
-                        </div>
-                        <div class="form-group">
-                            <label for="tube-wall-thickness">Толщина стенки (мм)</label>
-                            <input type="number" id="tube-wall-thickness" step="0.1" value="1.0">
+                        
+                        <div class="form-row">
+                            <div class="form-group">
+                                <label for="tube-v-air">Скорость звука в воздухе</label>
+                                <div class="input-with-unit">
+                                    <input type="number" id="tube-v-air" step="1" value="34300" readonly>
+                                    <span class="unit">см/с</span>
+                                </div>
+                                <small>При 20°C</small>
+                            </div>
+                            <div class="form-group">
+                                <label for="tube-v-eff">Эффективная скорость звука в трубке</label>
+                                <div class="input-with-unit">
+                                    <input type="number" id="tube-v-eff" step="1" min="20000" max="40000" value="34300">
+                                    <span class="unit">см/с</span>
+                                </div>
+                                <small>Измеряется калибровкой или оставлять 34300</small>
+                            </div>
+                            <div class="form-group">
+                                <label for="tube-damping">Добротность (Q)</label>
+                                <select id="tube-damping">
+                                    <option value="high">Высокая (звонко звучит)</option>
+                                    <option value="medium" selected>Средняя</option>
+                                    <option value="low">Низкая (быстро затухает)</option>
+                                </select>
+                            </div>
                         </div>
                     </div>
                     
-                    <div class="form-row">
-                        <div class="form-group">
-                            <label for="tube-expansion">Коэффициент расширения</label>
-                            <input type="number" id="tube-expansion" step="0.001" value="1.0">
-                            <small>1.0 = цилиндр, >1.0 = конус</small>
-                        </div>
-                        <div class="form-group">
-                            <label for="tube-standard-length">Стандартная длина (мм)</label>
-                            <input type="number" id="tube-standard-length" value="500.0">
-                        </div>
-                        <div class="form-group">
-                            <label for="tube-density">Плотность материала (г/см³)</label>
-                            <input type="number" id="tube-density" step="0.01" value="1.38">
-                        </div>
+                    <div class="parameter-category">
+                        <h4>📊 Справочные данные материалов</h4>
+                        <table class="parameter-table">
+                            <thead>
+                                <tr>
+                                    <th>Материал</th>
+                                    <th>Плотность (г/см³)</th>
+                                    <th>Скорость звука (м/с)</th>
+                                    <th>Температурный коэф.</th>
+                                    <th></th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                <tr>
+                                    <td>Алюминий</td>
+                                    <td>2.70</td>
+                                    <td>6420</td>
+                                    <td>0.17 мм/°C</td>
+                                    <td><button class="btn btn-secondary" onclick="fillMaterialData('aluminum')" style="padding: 2px 8px;">Использовать</button></td>
+                                </tr>
+                                <tr>
+                                    <td>Сталь</td>
+                                    <td>7.85</td>
+                                    <td>5960</td>
+                                    <td>0.11 мм/°C</td>
+                                    <td><button class="btn btn-secondary" onclick="fillMaterialData('steel')" style="padding: 2px 8px;">Использовать</button></td>
+                                </tr>
+                                <tr>
+                                    <td>Латунь</td>
+                                    <td>8.50</td>
+                                    <td>4700</td>
+                                    <td>0.18 мм/°C</td>
+                                    <td><button class="btn btn-secondary" onclick="fillMaterialData('brass')" style="padding: 2px 8px;">Использовать</button></td>
+                                </tr>
+                                <tr>
+                                    <td>Бронза</td>
+                                    <td>8.80</td>
+                                    <td>4500</td>
+                                    <td>0.18 мм/°C</td>
+                                    <td><button class="btn btn-secondary" onclick="fillMaterialData('bronze')" style="padding: 2px 8px;">Использовать</button></td>
+                                </tr>
+                                <tr>
+                                    <td>PP (Полипропилен)</td>
+                                    <td>0.90</td>
+                                    <td>2700</td>
+                                    <td>0.15 мм/°C</td>
+                                    <td><button class="btn btn-secondary" onclick="fillMaterialData('pp')" style="padding: 2px 8px;">Использовать</button></td>
+                                </tr>
+                                <tr>
+                                    <td>PETG</td>
+                                    <td>1.27</td>
+                                    <td>2400</td>
+                                    <td>0.12 мм/°C</td>
+                                    <td><button class="btn btn-secondary" onclick="fillMaterialData('petg')" style="padding: 2px 8px;">Использовать</button></td>
+                                </tr>
+                                <tr>
+                                    <td>Стекло</td>
+                                    <td>2.50</td>
+                                    <td>5800</td>
+                                    <td>0.09 мм/°C</td>
+                                    <td><button class="btn btn-secondary" onclick="fillMaterialData('glass')" style="padding: 2px 8px;">Использовать</button></td>
+                                </tr>
+                                <tr>
+                                    <td>Дерево</td>
+                                    <td>0.60</td>
+                                    <td>4000</td>
+                                    <td>0.05 мм/°C</td>
+                                    <td><button class="btn btn-secondary" onclick="fillMaterialData('wood')" style="padding: 2px 8px;">Использовать</button></td>
+                                </tr>
+                                <tr>
+                                    <td>Резина (Шланг)</td>
+                                    <td>1.10</td>
+                                    <td>1500</td>
+                                    <td>0.25 мм/°C</td>
+                                    <td><button class="btn btn-secondary" onclick="fillMaterialData('rubber')" style="padding: 2px 8px;">Использовать</button></td>
+                                </tr>
+                                <tr>
+                                    <td>PVC</td>
+                                    <td>1.38</td>
+                                    <td>2200</td>
+                                    <td>0.10 мм/°C</td>
+                                    <td><button class="btn btn-secondary" onclick="fillMaterialData('pvc')" style="padding: 2px 8px;">Использовать</button></td>
+                                </tr>
+                            </tbody>
+                        </table>
                     </div>
                     
                     <div id="tube-error" class="error"></div>
@@ -426,7 +922,7 @@
                     
                     <div class="actions">
                         <button class="btn btn-primary" onclick="addTube()">
-                            ✅ Добавить трубку
+                            ✅ Сохранить трубку с параметрами
                         </button>
                         <button class="btn btn-secondary" onclick="resetTubeForm()">
                             🔄 Сбросить форму
@@ -445,61 +941,170 @@
             
             <!-- Раструбы -->
             <div id="bells-tab" class="tab-content">
+                <div class="warning">
+                    <strong>⚠️ Внимание!</strong> Для точных расчетов желательно выполнить акустические измерения с раструбом и без.
+                </div>
+                
                 <div class="form-section">
                     <h3>➕ Добавить новый раструб</h3>
-                    <div class="form-row">
-                        <div class="form-group">
-                            <label for="bell-name">Название</label>
-                            <input type="text" id="bell-name" placeholder="Например: Малый раструб">
+                    
+                    <div class="parameter-category">
+                        <h4>📏 Геометрические параметры</h4>
+                        <div class="form-row">
+                            <div class="form-group">
+                                <label for="bell-name" class="required">Название раструба</label>
+                                <input type="text" id="bell-name" placeholder="Например: Bell_Alto_Sax_Style">
+                            </div>
+                            <div class="form-group">
+                                <label for="bell-type" class="required">Тип раструба</label>
+                                <select id="bell-type">
+                                    <option value="flare">Расширяющийся конус</option>
+                                    <option value="straight">Прямой (цилиндр)</option>
+                                    <option value="none">Без раструба</option>
+                                    <option value="exponential">Экспоненциальный</option>
+                                    <option value="parabolic">Параболический</option>
+                                    <option value="step">Ступенчатый</option>
+                                    <option value="trumpet">Трубный тип</option>
+                                    <option value="flute">Флейтовый раструб</option>
+                                </select>
+                            </div>
+                            <div class="form-group">
+                                <label for="bell-material">Материал</label>
+                                <select id="bell-material">
+                                    <option value="same">Как у трубки</option>
+                                    <option value="metal">Металл</option>
+                                    <option value="brass">Латунь</option>
+                                    <option value="plastic">Пластик</option>
+                                    <option value="wood">Дерево</option>
+                                    <option value="acrylic">Акрил</option>
+                                </select>
+                            </div>
                         </div>
-                        <div class="form-group">
-                            <label for="bell-type">Тип</label>
-                            <select id="bell-type">
-                                <option value="flare">Расширяющийся</option>
-                                <option value="straight">Прямой</option>
-                                <option value="none">Без раструба</option>
-                                <option value="exponential">Экспоненциальный</option>
-                            </select>
+                        
+                        <div class="form-row">
+                            <div class="form-group">
+                                <label for="bell-d-in" class="required">Диаметр входа (d_bell_in)</label>
+                                <div class="input-with-unit">
+                                    <input type="number" id="bell-d-in" step="0.01" min="5" max="100" value="28.0">
+                                    <span class="unit">мм</span>
+                                </div>
+                                <small>Диаметр в начале раструба (где крепится к трубке)</small>
+                            </div>
+                            <div class="form-group">
+                                <label for="bell-d-out">Диаметр выхода (d_bell_out)</label>
+                                <div class="input-with-unit">
+                                    <input type="number" id="bell-d-out" step="0.01" min="10" max="200" value="80.0">
+                                    <span class="unit">мм</span>
+                                </div>
+                                <small>Диаметр на выходе раструба</small>
+                            </div>
+                            <div class="form-group">
+                                <label for="bell-length" class="required">Длина раструба (L_bell)</label>
+                                <div class="input-with-unit">
+                                    <input type="number" id="bell-length" step="0.1" min="10" max="500" value="150.0">
+                                    <span class="unit">мм</span>
+                                </div>
+                            </div>
                         </div>
+                        
+                        <div class="form-row">
+                            <div class="form-group">
+                                <label for="bell-expansion">Коэффициент расширения</label>
+                                <div class="input-with-unit">
+                                    <input type="number" id="bell-expansion" step="0.01" min="1.0" max="5.0" value="2.86" readonly>
+                                    <span class="unit">d_out/d_in</span>
+                                </div>
+                                <small>Вычисляется автоматически</small>
+                            </div>
+                            <div class="form-group">
+                                <label for="bell-angle">Угол раскрытия</label>
+                                <div class="input-with-unit">
+                                    <input type="number" id="bell-angle" step="0.1" min="0" max="90" value="15.0" readonly>
+                                    <span class="unit">°</span>
+                                </div>
+                                <small>Вычисляется автоматически</small>
+                            </div>
+                            <div class="form-group">
+                                <label for="bell-wall">Толщина стенки</label>
+                                <div class="input-with-unit">
+                                    <input type="number" id="bell-wall" step="0.1" min="0.1" max="10" value="1.5">
+                                    <span class="unit">мм</span>
+                                </div>
+                            </div>
+                        </div>
+                        
                         <div class="form-group">
-                            <label for="bell-material">Материал</label>
-                            <select id="bell-material">
-                                <option value="same">Как у трубки</option>
-                                <option value="metal">Металл</option>
-                                <option value="plastic">Пластик</option>
-                                <option value="wood">Дерево</option>
-                            </select>
+                            <label>Профиль кривой (измерить диаметры через каждые 10мм)</label>
+                            <textarea id="bell-profile" rows="3" placeholder="Например: 0мм: 28мм, 50мм: 54мм, 100мм: 72мм, 150мм: 80мм"></textarea>
+                            <small>Измерьте и запишите диаметры по длине раструба</small>
                         </div>
                     </div>
                     
-                    <div class="form-row">
-                        <div class="form-group">
-                            <label for="bell-start-diameter">Диаметр начала (мм)</label>
-                            <input type="number" id="bell-start-diameter" step="0.1" value="22.0">
+                    <div class="parameter-category">
+                        <h4>🎵 Акустические измерения (опционально, но рекомендуется)</h4>
+                        
+                        <div class="measurement-section">
+                            <h4>🔊 Измерение эффективной добавленной длины (ΔL_bell)</h4>
+                            <p><strong>Методика:</strong> Измерьте основную частоту трубки без раструба (f_no_bell), затем установите раструб и измерьте частоту (f_with_bell).</p>
+                            
+                            <div class="form-row">
+                                <div class="form-group">
+                                    <label for="bell-f-no">Частота без раструба (f_no_bell)</label>
+                                    <div class="input-with-unit">
+                                        <input type="number" id="bell-f-no" step="0.1" value="">
+                                        <span class="unit">Гц</span>
+                                    </div>
+                                </div>
+                                <div class="form-group">
+                                    <label for="bell-f-with">Частота с раструбом (f_with_bell)</label>
+                                    <div class="input-with-unit">
+                                        <input type="number" id="bell-f-with" step="0.1" value="">
+                                        <span class="unit">Гц</span>
+                                    </div>
+                                </div>
+                                <div class="form-group">
+                                    <label for="bell-v-sound">Скорость звука в воздухе</label>
+                                    <div class="input-with-unit">
+                                        <input type="number" id="bell-v-sound" step="1" value="34300">
+                                        <span class="unit">см/с</span>
+                                    </div>
+                                </div>
+                            </div>
+                            
+                            <div class="actions">
+                                <button class="btn btn-info" onclick="calculateBellEffect()">
+                                    📐 Рассчитать ΔL_bell
+                                </button>
+                            </div>
+                            
+                            <div id="bell-effect-result" class="calibration-result" style="display: none;">
+                                <h5>🎯 Результаты расчета</h5>
+                                <p>Эффективная добавленная длина: <span id="delta-L-value">0</span> мм</p>
+                                <p>Обычно отрицательное число (раструб укорачивает эффективную длину)</p>
+                                <button class="btn btn-secondary" onclick="useCalculatedDeltaL()" style="margin-top: 10px;">
+                                    ✅ Использовать это значение
+                                </button>
+                            </div>
                         </div>
-                        <div class="form-group">
-                            <label for="bell-end-diameter">Диаметр конца (мм)</label>
-                            <input type="number" id="bell-end-diameter" step="0.1" value="35.0">
-                        </div>
-                        <div class="form-group">
-                            <label for="bell-length">Длина (мм)</label>
-                            <input type="number" id="bell-length" step="0.1" value="80.0">
-                        </div>
-                    </div>
-                    
-                    <div class="form-row">
-                        <div class="form-group">
-                            <label for="bell-expansion-ratio">Коэффициент расширения</label>
-                            <input type="number" id="bell-expansion-ratio" step="0.01" value="1.6">
-                            <small>Отношение конечного диаметра к начальному</small>
-                        </div>
-                        <div class="form-group">
-                            <label for="bell-flare-angle">Угол раскрытия (°)</label>
-                            <input type="number" id="bell-flare-angle" step="0.1" value="15.0">
-                        </div>
-                        <div class="form-group">
-                            <label for="bell-wall-thickness">Толщина стенки (мм)</label>
-                            <input type="number" id="bell-wall-thickness" step="0.1" value="1.5">
+                        
+                        <div class="form-row">
+                            <div class="form-group">
+                                <label for="bell-delta-L">Эффективная добавленная длина (ΔL_bell)</label>
+                                <div class="input-with-unit">
+                                    <input type="number" id="bell-delta-L" step="0.1" min="-50" max="50" value="-12.5">
+                                    <span class="unit">мм</span>
+                                </div>
+                                <small>Отрицательное = укорачивает, положительное = удлиняет</small>
+                            </div>
+                            <div class="form-group">
+                                <label for="bell-acoustic">Акустическое влияние</label>
+                                <select id="bell-acoustic">
+                                    <option value="strong">Сильное (сильно повышает строй)</option>
+                                    <option value="medium" selected>Среднее</option>
+                                    <option value="weak">Слабое</option>
+                                    <option value="none">Не влияет</option>
+                                </select>
+                            </div>
                         </div>
                     </div>
                     
@@ -508,10 +1113,13 @@
                     
                     <div class="actions">
                         <button class="btn btn-primary" onclick="addBell()">
-                            ✅ Добавить раструб
+                            ✅ Сохранить раструб с параметрами
                         </button>
                         <button class="btn btn-secondary" onclick="resetBellForm()">
                             🔄 Сбросить форму
+                        </button>
+                        <button class="btn btn-info" onclick="fillSaxBellExample()">
+                            🎷 Пример: альт-саксофон
                         </button>
                     </div>
                 </div>
@@ -528,6 +1136,13 @@
     </div>
     
     <script>
+        // Объект для хранения выбранных компонентов
+        let selectedComponents = {
+            mouthpiece: null,
+            tube: null,
+            bell: null
+        };
+
         // Управление табами
         document.addEventListener('DOMContentLoaded', function() {
             // Загружаем данные при открытии
@@ -555,9 +1170,88 @@
                     this.classList.add('active');
                 });
             });
+            
+            // Автоматический расчет толщины стенки для трубки
+            document.getElementById('tube-d-in').addEventListener('input', updateTubeWall);
+            document.getElementById('tube-d-out').addEventListener('input', updateTubeWall);
+            
+            // Автоматический расчет расширения и угла для раструба
+            document.getElementById('bell-d-in').addEventListener('input', updateBellCalculations);
+            document.getElementById('bell-d-out').addEventListener('input', updateBellCalculations);
+            document.getElementById('bell-length').addEventListener('input', updateBellCalculations);
         });
         
+        function updateTubeWall() {
+            const dIn = parseFloat(document.getElementById('tube-d-in').value) || 0;
+            const dOut = parseFloat(document.getElementById('tube-d-out').value) || 0;
+            const wallThickness = (dOut - dIn) / 2;
+            document.getElementById('tube-wall').value = wallThickness.toFixed(2);
+        }
+        
+        function updateBellCalculations() {
+            const dIn = parseFloat(document.getElementById('bell-d-in').value) || 0;
+            const dOut = parseFloat(document.getElementById('bell-d-out').value) || 0;
+            const length = parseFloat(document.getElementById('bell-length').value) || 0;
+            
+            if (dIn > 0 && dOut > 0) {
+                const expansion = dOut / dIn;
+                document.getElementById('bell-expansion').value = expansion.toFixed(2);
+                
+                if (length > 0) {
+                    // Угол раскрытия: arctan((d_out - d_in)/2 / length)
+                    const halfDiff = (dOut - dIn) / 2;
+                    const angle = Math.atan(halfDiff / length) * (180 / Math.PI);
+                    document.getElementById('bell-angle').value = angle.toFixed(1);
+                }
+            }
+        }
+        
         // ========== МУНДШТУКИ ==========
+        
+        function calculateEndCorrection() {
+            const L_calib = parseFloat(document.getElementById('mp-L-calib').value) || 400;
+            const d_calib = parseFloat(document.getElementById('mp-d-calib').value) || 13;
+            const f_meas = parseFloat(document.getElementById('mp-f-meas').value);
+            
+            if (!f_meas || f_meas <= 0) {
+                showError('mp-error', 'Введите измеренную частоту (f_meas)');
+                return;
+            }
+            
+            // Скорость звука при 20°C в см/с
+            const v = 34300;
+            
+            // Эффективная длина: L_eff = v / (2 * f_meas)
+            const L_eff = v / (2 * f_meas); // в см
+            const L_eff_mm = L_eff * 10; // переводим в мм
+            
+            // Энд-коррекция: δ_m = (L_eff - L_calib) / 2
+            const delta_m = (L_eff_mm - L_calib) / 2;
+            
+            document.getElementById('L-eff-value').textContent = L_eff_mm.toFixed(1);
+            document.getElementById('delta-m-value').textContent = delta_m.toFixed(1);
+            document.getElementById('end-correction-result').style.display = 'block';
+        }
+        
+        function useCalculatedDeltaM() {
+            const deltaM = parseFloat(document.getElementById('delta-m-value').textContent);
+            document.getElementById('mp-delta-m').value = deltaM;
+            showSuccess('mp-success', `Энд-коррекция установлена: ${deltaM.toFixed(1)}мм`);
+        }
+        
+        function autoFillClarinetCalibration() {
+            document.getElementById('mp-L-calib').value = '400.0';
+            document.getElementById('mp-d-calib').value = '13.0';
+            document.getElementById('mp-f-meas').value = '320.0';
+            calculateEndCorrection();
+        }
+        
+        function autoFillSaxCalibration() {
+            document.getElementById('mp-L-calib').value = '400.0';
+            document.getElementById('mp-d-calib').value = '17.0';
+            document.getElementById('mp-f-meas').value = '280.0';
+            calculateEndCorrection();
+        }
         
         async function loadMouthpieces() {
             try {
@@ -574,7 +1268,7 @@
                         container.appendChild(card);
                     });
                 } else {
-                    container.innerHTML = '<p style="text-align: center; color: #666;">Мундштуков пока нет</p>';
+                    container.innerHTML = '<p style="text-align: center; color: #666; padding: 40px;">Мундштуков пока нет</p>';
                 }
             } catch (error) {
                 console.error('Ошибка загрузки мундштуков:', error);
@@ -584,32 +1278,55 @@
         }
         
         function createMouthpieceCard(mp) {
+            // Определяем статус измерений
+            let measurementStatus = 'status-required';
+            let statusText = 'Нет данных';
+            
+            if (mp.delta_m && mp.delta_m > 0) {
+                measurementStatus = 'status-complete';
+                statusText = 'Измерено';
+            } else if (mp.L_m && mp.d_tip) {
+                measurementStatus = 'status-partial';
+                statusText = 'Частично';
+            }
+            
             const card = document.createElement('div');
             card.className = 'component-card';
+            card.dataset.id = mp.id;
+            card.dataset.type = 'mouthpieces';
+            
             card.innerHTML = `
+                <div class="measurement-status ${measurementStatus}">${statusText}</div>
                 <h3>${mp.name}</h3>
                 <div class="component-param">
                     <span class="param-label">Тип:</span>
-                    <span class="param-value">${mp.type || 'Не указан'}</span>
+                    <span class="param-value">${getMouthpieceTypeName(mp.type)}</span>
+                </div>
+                <div class="component-param">
+                    <span class="param-label">Энд-коррекция:</span>
+                    <span class="param-value">${mp.delta_m ? mp.delta_m.toFixed(1) + ' мм' : 'Не измерено'}</span>
+                </div>
+                <div class="component-param">
+                    <span class="param-label">d_tip / d_out:</span>
+                    <span class="param-value">${mp.d_tip ? mp.d_tip.toFixed(1) : '?'} / ${mp.d_out ? mp.d_out.toFixed(1) : '?'} мм</span>
+                </div>
+                <div class="component-param">
+                    <span class="param-label">L_m:</span>
+                    <span class="param-value">${mp.L_m ? mp.L_m.toFixed(1) + ' мм' : '?'}</span>
                 </div>
                 <div class="component-param">
                     <span class="param-label">Производитель:</span>
                     <span class="param-value">${mp.brand || '-'}</span>
                 </div>
-                <div class="component-param">
-                    <span class="param-label">Внутр. диаметр:</span>
-                    <span class="param-value">${mp.inner_diameter || '?'} мм</span>
-                </div>
-                <div class="component-param">
-                    <span class="param-label">Энд-коррекция:</span>
-                    <span class="param-value">${mp.end_correction || '?'} мм</span>
-                </div>
-                <div class="component-param">
-                    <span class="param-label">Материал:</span>
-                    <span class="param-value">${mp.material || 'Не указан'}</span>
-                </div>
-                <div style="margin-top: 15px; text-align: right;">
-                    <button onclick="deleteComponent('mouthpieces', ${mp.id})" class="btn btn-danger" style="padding: 5px 10px; font-size: 14px;">
+                <div style="margin-top: 15px; display: flex; gap: 10px; justify-content: flex-end;">
+                    <button onclick="selectComponent(${mp.id}, 'mouthpieces', '${mp.name}')" 
+                            class="btn btn-secondary" 
+                            style="padding: 5px 10px; font-size: 14px;">
+                        ✅ Выбрать
+                    </button>
+                    <button onclick="deleteComponent('mouthpieces', ${mp.id})" 
+                            class="btn btn-danger" 
+                            style="padding: 5px 10px; font-size: 14px;">
                         Удалить
                     </button>
                 </div>
@@ -617,17 +1334,39 @@
             return card;
         }
         
+        function getMouthpieceTypeName(type) {
+            const names = {
+                'clarinet': 'Кларнет',
+                'alto_sax': 'Альт саксофон',
+                'tenor_sax': 'Тенор саксофон',
+                'soprano_sax': 'Сопрано саксофон',
+                'bass_clarinet': 'Басс кларнет',
+                'native': 'Нативный',
+                'flute': 'Флейта',
+                'recorder': 'Рекордер'
+            };
+            return names[type] || type;
+        }
+        
         async function addMouthpiece() {
             const data = {
                 name: document.getElementById('mp-name').value.trim(),
                 type: document.getElementById('mp-type').value,
                 brand: document.getElementById('mp-brand').value.trim(),
-                inner_diameter: parseFloat(document.getElementById('mp-inner-diameter').value),
-                outer_diameter: parseFloat(document.getElementById('mp-outer-diameter').value),
-                length: parseFloat(document.getElementById('mp-length').value),
-                end_correction: parseFloat(document.getElementById('mp-end-correction').value),
-                embouchure: document.getElementById('mp-embouchure').value,
-                material: document.getElementById('mp-material').value
+                d_tip: parseFloat(document.getElementById('mp-d-tip').value),
+                d_out: parseFloat(document.getElementById('mp-d-out').value),
+                L_m: parseFloat(document.getElementById('mp-L-m').value),
+                L_cyl: parseFloat(document.getElementById('mp-L-cyl').value) || 0,
+                baffle: document.getElementById('mp-baffle').value,
+                chamber_depth: parseFloat(document.getElementById('mp-chamber').value),
+                delta_m: parseFloat(document.getElementById('mp-delta-m').value),
+                temperature: parseFloat(document.getElementById('mp-temperature').value),
+                notes: document.getElementById('mp-notes').value.trim(),
+                
+                // Данные для калибровки
+                L_calib: parseFloat(document.getElementById('mp-L-calib').value),
+                d_calib: parseFloat(document.getElementById('mp-d-calib').value),
+                f_meas: parseFloat(document.getElementById('mp-f-meas').value)
             };
             
             if (!data.name) {
@@ -635,23 +1374,26 @@
                 return;
             }
             
+            if (!data.d_tip || !data.d_out) {
+                showError('mp-error', 'Введите диаметры мундштука');
+                return;
+            }
+            
             try {
                 const response = await fetch('/api/mouthpieces', {
                     method: 'POST',
-                    headers: {
-                        'Content-Type': 'application/json'
-                    },
+                    headers: { 'Content-Type': 'application/json' },
                     body: JSON.stringify(data)
                 });
                 
                 const result = await response.json();
                 
                 if (response.ok) {
-                    showSuccess('mp-success', 'Мундштук добавлен!');
+                    showSuccess('mp-success', `Мундштук "${data.name}" сохранен!`);
                     resetMouthpieceForm();
                     loadMouthpieces();
                 } else {
-                    showError('mp-error', result.error || 'Ошибка при добавлении');
+                    showError('mp-error', result.error || 'Ошибка при сохранении');
                 }
             } catch (error) {
                 showError('mp-error', `Ошибка сети: ${error.message}`);
@@ -662,16 +1404,81 @@
             document.getElementById('mp-name').value = '';
             document.getElementById('mp-type').value = 'clarinet';
             document.getElementById('mp-brand').value = '';
-            document.getElementById('mp-inner-diameter').value = '14.7';
-            document.getElementById('mp-outer-diameter').value = '16.0';
-            document.getElementById('mp-length').value = '85.0';
-            document.getElementById('mp-end-correction').value = '15.0';
-            document.getElementById('mp-embouchure').value = 'rounded';
-            document.getElementById('mp-material').value = 'plastic';
+            document.getElementById('mp-d-tip').value = '13.5';
+            document.getElementById('mp-d-out').value = '14.7';
+            document.getElementById('mp-L-m').value = '75.0';
+            document.getElementById('mp-L-cyl').value = '0.0';
+            document.getElementById('mp-baffle').value = 'low_straight';
+            document.getElementById('mp-chamber').value = '15.0';
+            document.getElementById('mp-delta-m').value = '68.0';
+            document.getElementById('mp-temperature').value = '20.0';
+            document.getElementById('mp-notes').value = '';
+            document.getElementById('mp-L-calib').value = '400.0';
+            document.getElementById('mp-d-calib').value = '13.0';
+            document.getElementById('mp-f-meas').value = '320.0';
             hideMessages('mp');
+            document.getElementById('end-correction-result').style.display = 'none';
         }
         
         // ========== ТРУБКИ ==========
+        
+        function calculateTubeVelocity() {
+            const f_tube = parseFloat(document.getElementById('tube-f-tube').value);
+            const L_total = parseFloat(document.getElementById('tube-L-total').value);
+            
+            if (!f_tube || f_tube <= 0) {
+                showError('tube-error', 'Введите измеренную частоту (f_tube)');
+                return;
+            }
+            
+            if (!L_total || L_total <= 0) {
+                showError('tube-error', 'Введите длину трубки при измерении');
+                return;
+            }
+            
+            // Для трубы с обоими закрытыми концами: f_tube = (v_eff * n) / (2 * L_total)
+            // где n=1 для основного тона, L_total в см
+            const L_total_cm = L_total / 10; // переводим в см
+            const v_eff = 2 * L_total_cm * f_tube; // в см/с
+            
+            const v_air = 34300; // скорость звука в воздухе при 20°C
+            const ratio = v_eff / v_air;
+            
+            document.getElementById('v-eff-value').textContent = v_eff.toFixed(0);
+            document.getElementById('v-ratio-value').textContent = ratio.toFixed(3);
+            document.getElementById('tube-velocity-result').style.display = 'block';
+        }
+        
+        function useCalculatedVelocity() {
+            const vEff = parseFloat(document.getElementById('v-eff-value').textContent);
+            document.getElementById('tube-v-eff').value = vEff;
+            showSuccess('tube-success', `Скорость звука установлена: ${vEff.toFixed(0)} см/с`);
+        }
+        
+        function fillMaterialData(material) {
+            const data = {
+                'aluminum': { name: 'Алюминий 6061', d_in: 20.0, d_out: 22.0, v_eff: 33500 },
+                'steel': { name: 'Сталь 304', d_in: 19.0, d_out: 21.0, v_eff: 33000 },
+                'brass': { name: 'Латунь', d_in: 20.0, d_out: 22.0, v_eff: 32000 },
+                'bronze': { name: 'Бронза', d_in: 20.0, d_out: 22.0, v_eff: 31500 },
+                'pp': { name: 'PP трубка', d_in: 20.0, d_out: 22.0, v_eff: 28000 },
+                'petg': { name: 'PETG', d_in: 20.0, d_out: 22.0, v_eff: 27000 },
+                'glass': { name: 'Стекло', d_in: 20.0, d_out: 22.0, v_eff: 34000 },
+                'wood': { name: 'Дерево (клен)', d_in: 20.0, d_out: 22.0, v_eff: 31000 },
+                'rubber': { name: 'Резиновый шланг', d_in: 19.0, d_out: 22.0, v_eff: 25000 },
+                'pvc': { name: 'PVC', d_in: 20.0, d_out: 22.0, v_eff: 29000 }
+            };
+            
+            if (data[material]) {
+                document.getElementById('tube-name').value = data[material].name;
+                document.getElementById('tube-material').value = material;
+                document.getElementById('tube-d-in').value = data[material].d_in;
+                document.getElementById('tube-d-out').value = data[material].d_out;
+                document.getElementById('tube-v-eff').value = data[material].v_eff;
+                updateTubeWall();
+                showSuccess('tube-success', `Данные для ${material} загружены`);
+            }
+        }
         
         async function loadTubes() {
             try {
@@ -688,7 +1495,7 @@
                         container.appendChild(card);
                     });
                 } else {
-                    container.innerHTML = '<p style="text-align: center; color: #666;">Трубок пока нет</p>';
+                    container.innerHTML = '<p style="text-align: center; color: #666; padding: 40px;">Трубок пока нет</p>';
                 }
             } catch (error) {
                 console.error('Ошибка загрузки трубок:', error);
@@ -698,52 +1505,103 @@
         }
         
         function createTubeCard(tube) {
-            const wallThickness = tube.wall_thickness || (tube.outer_diameter - tube.inner_diameter);
+            // Определяем статус калибровки
+            let measurementStatus = 'status-required';
+            let statusText = 'Нет данных';
+            
+            if (tube.v_eff && tube.v_eff !== 34300) {
+                measurementStatus = 'status-complete';
+                statusText = 'Калибровано';
+            } else if (tube.d_in && tube.d_out) {
+                measurementStatus = 'status-partial';
+                statusText = 'Частично';
+            }
+            
+            const wallThickness = tube.wall_thickness || ((tube.d_out - tube.d_in) / 2);
             
             const card = document.createElement('div');
             card.className = 'component-card';
+            card.dataset.id = tube.id;
+            card.dataset.type = 'tubes';
+            
             card.innerHTML = `
+                <div class="measurement-status ${measurementStatus}">${statusText}</div>
                 <h3>${tube.name}</h3>
                 <div class="component-param">
                     <span class="param-label">Материал:</span>
-                    <span class="param-value">${tube.material || 'Не указан'}</span>
+                    <span class="param-value">${getMaterialName(tube.material)}</span>
                 </div>
                 <div class="component-param">
-                    <span class="param-label">Форма:</span>
-                    <span class="param-value">${tube.form || 'Круглая'}</span>
-                </div>
-                <div class="component-param">
-                    <span class="param-label">Внутр. диаметр:</span>
-                    <span class="param-value">${tube.inner_diameter || '?'} мм</span>
+                    <span class="param-label">Диаметр:</span>
+                    <span class="param-value">${tube.d_in ? tube.d_in.toFixed(1) : '?'} мм</span>
                 </div>
                 <div class="component-param">
                     <span class="param-label">Толщина стенки:</span>
                     <span class="param-value">${wallThickness.toFixed(1)} мм</span>
                 </div>
                 <div class="component-param">
-                    <span class="param-label">Расширение:</span>
-                    <span class="param-value">${tube.expansion || 1.0}</span>
+                    <span class="param-label">V_eff:</span>
+                    <span class="param-value">${tube.v_eff ? (tube.v_eff / 1000).toFixed(1) + ' м/с' : '343 м/с'}</span>
                 </div>
-                <div style="margin-top: 15px; text-align: right;">
-                    <button onclick="deleteComponent('tubes', ${tube.id})" class="btn btn-danger" style="padding: 5px 10px; font-size: 14px;">
+                <div class="component-param">
+                    <span class="param-label">Конусность:</span>
+                    <span class="param-value">${tube.taper ? tube.taper.toFixed(4) : '0.0000'}</span>
+                </div>
+                <div style="margin-top: 15px; display: flex; gap: 10px; justify-content: flex-end;">
+                    <button onclick="selectComponent(${tube.id}, 'tubes', '${tube.name}')" 
+                            class="btn btn-secondary" 
+                            style="padding: 5px 10px; font-size: 14px;">
+                        ✅ Выбрать
+                    </button>
+                    <button onclick="deleteComponent('tubes', ${tube.id})" 
+                            class="btn btn-danger" 
+                            style="padding: 5px 10px; font-size: 14px;">
                         Удалить
                     </button>
                 </div>
             `;
+            
             return card;
         }
         
-        async function addTube() {
+        function getMaterialName(material) {
+            const names = {
+                'aluminum': 'Алюминий',
+                'steel': 'Сталь',
+                'bronze': 'Бронза',
+                'brass': 'Латунь',
+                'pp': 'PP',
+                'petg': 'PETG',
+                'glass': 'Стекло',
+                'wood': 'Дерево',
+                'rubber': 'Резина',
+                'pvc': 'PVC',
+                'carbon': 'Карбон',
+                'copper': 'Медь',
+                'acrylic': 'Акрил',
+                'bamboo': 'Бамбук'
+            };
+            return names[material] || material;
+        }
+        
+       async function addTube() {
             const data = {
                 name: document.getElementById('tube-name').value.trim(),
                 material: document.getElementById('tube-material').value,
-                form: document.getElementById('tube-form').value,
-                inner_diameter: parseFloat(document.getElementById('tube-inner-diameter').value),
-                outer_diameter: parseFloat(document.getElementById('tube-outer-diameter').value),
-                wall_thickness: parseFloat(document.getElementById('tube-wall-thickness').value),
-                expansion: parseFloat(document.getElementById('tube-expansion').value),
-                standard_length: parseFloat(document.getElementById('tube-standard-length').value),
-                density: parseFloat(document.getElementById('tube-density').value)
+                length: parseFloat(document.getElementById('tube-length').value) || 500,
+                d_in: parseFloat(document.getElementById('tube-d-in').value),
+                d_out: parseFloat(document.getElementById('tube-d-out').value),
+                wall_thickness: parseFloat(document.getElementById('tube-wall').value),
+                taper: parseFloat(document.getElementById('tube-taper').value) || 0,
+                form: 'round',
+                roughness: document.getElementById('tube-roughness').value,
+                v_air: parseFloat(document.getElementById('tube-v-air').value),
+                v_eff: parseFloat(document.getElementById('tube-v-eff').value),
+                damping: document.getElementById('tube-damping').value,
+                f_tube: parseFloat(document.getElementById('tube-f-tube').value) || null,
+                L_total: parseFloat(document.getElementById('tube-L-total').value) || null,
+                density: null,
+                thermal_coeff: null
             };
             
             if (!data.name) {
@@ -751,23 +1609,26 @@
                 return;
             }
             
+            if (!data.d_in || !data.d_out) {
+                showError('tube-error', 'Введите диаметры трубки');
+                return;
+            }
+            
             try {
                 const response = await fetch('/api/tubes', {
                     method: 'POST',
-                    headers: {
-                        'Content-Type': 'application/json'
-                    },
+                    headers: { 'Content-Type': 'application/json' },
                     body: JSON.stringify(data)
                 });
                 
                 const result = await response.json();
                 
                 if (response.ok) {
-                    showSuccess('tube-success', 'Трубка добавлена!');
+                    showSuccess('tube-success', `Трубка "${data.name}" сохранена!`);
                     resetTubeForm();
                     loadTubes();
                 } else {
-                    showError('tube-error', result.error || 'Ошибка при добавлении');
+                    showError('tube-error', result.error || 'Ошибка при сохранении');
                 }
             } catch (error) {
                 showError('tube-error', `Ошибка сети: ${error.message}`);
@@ -776,18 +1637,63 @@
         
         function resetTubeForm() {
             document.getElementById('tube-name').value = '';
-            document.getElementById('tube-material').value = 'pvc';
-            document.getElementById('tube-form').value = 'round';
-            document.getElementById('tube-inner-diameter').value = '20.0';
-            document.getElementById('tube-outer-diameter').value = '22.0';
-            document.getElementById('tube-wall-thickness').value = '1.0';
-            document.getElementById('tube-expansion').value = '1.0';
-            document.getElementById('tube-standard-length').value = '500.0';
-            document.getElementById('tube-density').value = '1.38';
+            document.getElementById('tube-material').value = 'aluminum';
+            document.getElementById('tube-length').value = '500';
+            document.getElementById('tube-d-in').value = '20.0';
+            document.getElementById('tube-d-out').value = '22.0';
+            document.getElementById('tube-taper').value = '0.0';
+            document.getElementById('tube-roughness').value = 'smooth';
+            document.getElementById('tube-v-air').value = '34300';
+            document.getElementById('tube-v-eff').value = '34300';
+            document.getElementById('tube-damping').value = 'medium';
+            document.getElementById('tube-f-tube').value = '';
+            document.getElementById('tube-L-total').value = '';
+            document.getElementById('tube-temp').value = '20.0';
             hideMessages('tube');
+            document.getElementById('tube-velocity-result').style.display = 'none';
+            updateTubeWall();
         }
         
         // ========== РАСТРУБЫ ==========
+        
+        function calculateBellEffect() {
+            const f_no = parseFloat(document.getElementById('bell-f-no').value);
+            const f_with = parseFloat(document.getElementById('bell-f-with').value);
+            const v_sound = parseFloat(document.getElementById('bell-v-sound').value);
+            
+            if (!f_no || !f_with || f_no <= 0 || f_with <= 0) {
+                showError('bell-error', 'Введите обе частоты (с раструбом и без)');
+                return;
+            }
+            
+            // ΔL_bell = v / (2 * (1/f_with_bell - 1/f_no_bell))
+            // переводим в мм: v в см/с → мм/с *100
+            const v_mm_per_s = v_sound * 10; // см/с → мм/с
+            const delta_L = v_mm_per_s / (2 * (1/f_with - 1/f_no));
+            
+            document.getElementById('delta-L-value').textContent = delta_L.toFixed(1);
+            document.getElementById('bell-effect-result').style.display = 'block';
+        }
+        
+        function useCalculatedDeltaL() {
+            const deltaL = parseFloat(document.getElementById('delta-L-value').textContent);
+            document.getElementById('bell-delta-L').value = deltaL;
+            showSuccess('bell-success', `ΔL_bell установлен: ${deltaL.toFixed(1)}мм`);
+        }
+        
+        function fillSaxBellExample() {
+            document.getElementById('bell-name').value = 'Alto_Sax_Bell_Example';
+            document.getElementById('bell-type').value = 'exponential';
+            document.getElementById('bell-material').value = 'brass';
+            document.getElementById('bell-d-in').value = '28.0';
+            document.getElementById('bell-d-out').value = '80.0';
+            document.getElementById('bell-length').value = '150.0';
+            document.getElementById('bell-wall').value = '0.5';
+            document.getElementById('bell-delta-L').value = '-12.5';
+            document.getElementById('bell-profile').value = '0мм: 28мм, 50мм: 54мм, 100мм: 72мм, 150мм: 80мм';
+            document.getElementById('bell-acoustic').value = 'strong';
+            updateBellCalculations();
+        }
         
         async function loadBells() {
             try {
@@ -804,7 +1710,7 @@
                         container.appendChild(card);
                     });
                 } else {
-                    container.innerHTML = '<p style="text-align: center; color: #666;">Раструбов пока нет</p>';
+                    container.innerHTML = '<p style="text-align: center; color: #666; padding: 40px;">Раструбов пока нет</p>';
                 }
             } catch (error) {
                 console.error('Ошибка загрузки раструбов:', error);
@@ -814,32 +1720,57 @@
         }
         
         function createBellCard(bell) {
+            // Определяем статус измерений
+            let measurementStatus = 'status-required';
+            let statusText = 'Нет данных';
+            
+            if (bell.delta_L !== undefined && bell.delta_L !== 0) {
+                measurementStatus = 'status-complete';
+                statusText = 'Измерено';
+            } else if (bell.start_diameter && bell.end_diameter) {
+                measurementStatus = 'status-partial';
+                statusText = 'Частично';
+            }
+            
+            const expansion = bell.expansion_ratio || (bell.end_diameter / bell.start_diameter);
+            
             const card = document.createElement('div');
             card.className = 'component-card';
+            card.dataset.id = bell.id;
+            card.dataset.type = 'bells';
+            
             card.innerHTML = `
+                <div class="measurement-status ${measurementStatus}">${statusText}</div>
                 <h3>${bell.name}</h3>
                 <div class="component-param">
                     <span class="param-label">Тип:</span>
-                    <span class="param-value">${bell.type || 'Не указан'}</span>
+                    <span class="param-value">${getBellTypeName(bell.type)}</span>
                 </div>
                 <div class="component-param">
-                    <span class="param-label">Начальный диаметр:</span>
-                    <span class="param-value">${bell.start_diameter || '?'} мм</span>
+                    <span class="param-label">ΔL_bell:</span>
+                    <span class="param-value">${bell.delta_L ? bell.delta_L.toFixed(1) + ' мм' : 'Не измерено'}</span>
                 </div>
                 <div class="component-param">
-                    <span class="param-label">Конечный диаметр:</span>
-                    <span class="param-value">${bell.end_diameter || '?'} мм</span>
+                    <span class="param-label">Диаметр:</span>
+                    <span class="param-value">${bell.start_diameter ? bell.start_diameter.toFixed(1) : '?'} → ${bell.end_diameter ? bell.end_diameter.toFixed(1) : '?'} мм</span>
                 </div>
                 <div class="component-param">
                     <span class="param-label">Длина:</span>
-                    <span class="param-value">${bell.length || '?'} мм</span>
+                    <span class="param-value">${bell.length ? bell.length.toFixed(1) + ' мм' : '?'}</span>
                 </div>
                 <div class="component-param">
                     <span class="param-label">Расширение:</span>
-                    <span class="param-value">${bell.expansion_ratio || 1.0}</span>
+                    <span class="param-value">${expansion.toFixed(2)}x</span>
                 </div>
-                <div style="margin-top: 15px; text-align: right;">
-                    <button onclick="deleteComponent('bells', ${bell.id})" class="btn btn-danger" style="padding: 5px 10px; font-size: 14px;">
+                <div style="margin-top: 15px; display: flex; gap: 10px; justify-content: flex-end;">
+                    <button onclick="selectComponent(${bell.id}, 'bells', '${bell.name}')" 
+                            class="btn btn-secondary" 
+                            style="padding: 5px 10px; font-size: 14px;">
+                        ✅ Выбрать
+                    </button>
+                    <button onclick="deleteComponent('bells', ${bell.id})" 
+                            class="btn btn-danger" 
+                            style="padding: 5px 10px; font-size: 14px;">
                         Удалить
                     </button>
                 </div>
@@ -847,17 +1778,39 @@
             return card;
         }
         
+        function getBellTypeName(type) {
+            const names = {
+                'flare': 'Конус',
+                'straight': 'Цилиндр',
+                'none': 'Без раструба',
+                'exponential': 'Экспоненциальный',
+                'parabolic': 'Параболический',
+                'step': 'Ступенчатый',
+                'trumpet': 'Трубный',
+                'flute': 'Флейтовый'
+            };
+            return names[type] || type;
+        }
+        
         async function addBell() {
             const data = {
                 name: document.getElementById('bell-name').value.trim(),
                 type: document.getElementById('bell-type').value,
                 material: document.getElementById('bell-material').value,
-                start_diameter: parseFloat(document.getElementById('bell-start-diameter').value),
-                end_diameter: parseFloat(document.getElementById('bell-end-diameter').value),
+                start_diameter: parseFloat(document.getElementById('bell-d-in').value),
+                end_diameter: parseFloat(document.getElementById('bell-d-out').value),
                 length: parseFloat(document.getElementById('bell-length').value),
-                expansion_ratio: parseFloat(document.getElementById('bell-expansion-ratio').value),
-                flare_angle: parseFloat(document.getElementById('bell-flare-angle').value),
-                wall_thickness: parseFloat(document.getElementById('bell-wall-thickness').value)
+                wall_thickness: parseFloat(document.getElementById('bell-wall').value),
+                expansion_ratio: parseFloat(document.getElementById('bell-expansion').value),
+                flare_angle: parseFloat(document.getElementById('bell-angle').value),
+                delta_L: parseFloat(document.getElementById('bell-delta-L').value),
+                acoustic_effect: document.getElementById('bell-acoustic').value,
+                profile: document.getElementById('bell-profile').value.trim(),
+                
+                // Данные для калибровки
+                f_no_bell: parseFloat(document.getElementById('bell-f-no').value),
+                f_with_bell: parseFloat(document.getElementById('bell-f-with').value),
+                v_sound: parseFloat(document.getElementById('bell-v-sound').value)
             };
             
             if (!data.name) {
@@ -865,23 +1818,26 @@
                 return;
             }
             
+            if (!data.start_diameter || !data.end_diameter || !data.length) {
+                showError('bell-error', 'Введите основные параметры раструба');
+                return;
+            }
+            
             try {
                 const response = await fetch('/api/bells', {
                     method: 'POST',
-                    headers: {
-                        'Content-Type': 'application/json'
-                    },
+                    headers: { 'Content-Type': 'application/json' },
                     body: JSON.stringify(data)
                 });
                 
                 const result = await response.json();
                 
                 if (response.ok) {
-                    showSuccess('bell-success', 'Раструб добавлен!');
+                    showSuccess('bell-success', `Раструб "${data.name}" сохранен!`);
                     resetBellForm();
                     loadBells();
                 } else {
-                    showError('bell-error', result.error || 'Ошибка при добавлении');
+                    showError('bell-error', result.error || 'Ошибка при сохранении');
                 }
             } catch (error) {
                 showError('bell-error', `Ошибка сети: ${error.message}`);
@@ -892,16 +1848,41 @@
             document.getElementById('bell-name').value = '';
             document.getElementById('bell-type').value = 'flare';
             document.getElementById('bell-material').value = 'same';
-            document.getElementById('bell-start-diameter').value = '22.0';
-            document.getElementById('bell-end-diameter').value = '35.0';
-            document.getElementById('bell-length').value = '80.0';
-            document.getElementById('bell-expansion-ratio').value = '1.6';
-            document.getElementById('bell-flare-angle').value = '15.0';
-            document.getElementById('bell-wall-thickness').value = '1.5';
+            document.getElementById('bell-d-in').value = '28.0';
+            document.getElementById('bell-d-out').value = '80.0';
+            document.getElementById('bell-length').value = '150.0';
+            document.getElementById('bell-wall').value = '1.5';
+            document.getElementById('bell-delta-L').value = '-12.5';
+            document.getElementById('bell-acoustic').value = 'medium';
+            document.getElementById('bell-profile').value = '';
+            document.getElementById('bell-f-no').value = '';
+            document.getElementById('bell-f-with').value = '';
+            document.getElementById('bell-v-sound').value = '34300';
             hideMessages('bell');
+            document.getElementById('bell-effect-result').style.display = 'none';
+            updateBellCalculations();
         }
         
         // ========== ОБЩИЕ ФУНКЦИИ ==========
+        
+        // Функция выбора компонента
+        function selectComponent(id, type, name) {
+            console.log(`Выбор компонента: ${type} ID=${id}, название=${name}`);
+            
+            // Сохраняем выбранный компонент
+            selectedComponents[type] = id;
+            
+            // Показываем уведомление
+            showSuccess(`${type}-success`, `Выбрано: ${name}`);
+            
+            // Для отладки
+            console.log('Текущие выбранные компоненты:', selectedComponents);
+            
+            // Если это выбор из главной страницы, обновляем там выбор
+            if (window.parent && window.parent.updateSelectedComponents) {
+                window.parent.updateSelectedComponents(type, id, name);
+            }
+        }
         
         async function deleteComponent(type, id) {
             if (!confirm(`Удалить этот ${getComponentName(type)}?`)) {
@@ -918,11 +1899,13 @@
                     if (type === 'mouthpieces') loadMouthpieces();
                     else if (type === 'tubes') loadTubes();
                     else if (type === 'bells') loadBells();
+                    
+                    showSuccess(`${type}-success`, `${getComponentName(type).charAt(0).toUpperCase() + getComponentName(type).slice(1)} удален`);
                 } else {
-                    alert('Ошибка при удалении');
+                    showError(`${type}-error`, 'Ошибка при удалении');
                 }
             } catch (error) {
-                alert(`Ошибка сети: ${error.message}`);
+                showError(`${type}-error`, `Ошибка сети: ${error.message}`);
             }
         }
         
@@ -959,4 +1942,4 @@
         }
     </script>
 </body>
-</html> 
+</html>

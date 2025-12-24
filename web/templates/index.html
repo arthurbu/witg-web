@@ -3,7 +3,8 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>WITG - Wind Instrument Template Generator</title>
+    <title>🎵 WITG - Wind Instrument Template Generator</title>
+    <link rel="icon" href="data:image/svg+xml,<svg xmlns=%22http://www.w3.org/2000/svg%22 viewBox=%220 0 100 100%22><text y=%22.9em%22 font-size=%2290%22>🎷</text></svg>">
     <style>
         * {
             margin: 0;
@@ -228,6 +229,12 @@
             box-shadow: 0 0 0 3px rgba(76, 175, 80, 0.1);
         }
         
+        .calculated-length {
+            color: #666;
+            font-style: italic;
+            opacity: 0.7;
+        }
+        
         /* Октавы */
         .octave-selector {
             display: flex;
@@ -438,6 +445,15 @@
             background: #c82333;
         }
         
+        .btn-success {
+            background: #28a745;
+            color: white;
+        }
+        
+        .btn-success:hover {
+            background: #218838;
+        }
+        
         .wizard-actions {
             display: flex;
             justify-content: space-between;
@@ -481,6 +497,22 @@
             background: #f8f9fa;
             font-weight: 600;
             color: #2E7D32;
+        }
+        
+        /* Статусы нот */
+        .note-status-high {
+            color: #28a745;
+            font-weight: bold;
+        }
+        
+        .note-status-medium {
+            color: #ffc107;
+            font-weight: bold;
+        }
+        
+        .note-status-low {
+            color: #dc3545;
+            font-weight: bold;
         }
         
         /* Список дудиксов */
@@ -528,6 +560,63 @@
             border-radius: 15px;
             font-size: 0.8em;
             display: inline-block;
+        }
+        
+        .unverified-badge {
+            background: #6c757d;
+            color: white;
+            padding: 4px 10px;
+            border-radius: 15px;
+            font-size: 0.8em;
+            display: inline-block;
+        }
+        
+        /* Карточка дудикса */
+        .dudex-card {
+            position: fixed;
+            top: 50%;
+            left: 50%;
+            transform: translate(-50%, -50%);
+            background: white;
+            border-radius: 15px;
+            box-shadow: 0 20px 40px rgba(0,0,0,0.3);
+            z-index: 1000;
+            max-width: 800px;
+            width: 90%;
+            max-height: 90vh;
+            overflow-y: auto;
+        }
+        
+        .dudex-card-header {
+            background: linear-gradient(135deg, #4CAF50, #2E7D32);
+            color: white;
+            padding: 20px;
+            border-radius: 15px 15px 0 0;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+        
+        .dudex-card-content {
+            padding: 30px;
+        }
+        
+        .dudex-card-footer {
+            padding: 20px;
+            border-top: 1px solid #e9ecef;
+            display: flex;
+            justify-content: flex-end;
+            gap: 15px;
+        }
+        
+        .overlay {
+            position: fixed;
+            top: 0;
+            left: 0;
+            right: 0;
+            bottom: 0;
+            background: rgba(0,0,0,0.5);
+            z-index: 999;
         }
         
         /* Уведомления */
@@ -642,7 +731,7 @@
         <header>
             <div class="header-content">
                 <div class="logo">
-                    <h1>🎵 WITG</h1>
+                    <h1>🎷 WITG</h1>
                     <p>Wind Instrument Template Generator</p>
                 </div>
                 <div class="header-actions">
@@ -662,7 +751,7 @@
                 <div class="editor-title">
                     <h2>🎵 Создание нового дудикса</h2>
                     <div style="display: flex; gap: 10px;">
-                        <button class="btn btn-secondary" onclick="resetEditor()">
+                        <button class="btn btn-secondary" onclick="window.location.href='/create-flute'">
                             🆕 Новый дудикс
                         </button>
                     </div>
@@ -672,27 +761,23 @@
                 <div class="wizard-steps">
                     <div class="step active" data-step="1" onclick="goToStep(1)">
                         <div class="step-circle">1</div>
-                        <div class="step-label">Настройки</div>
+                        <div class="step-label">Параметры и компоненты</div>
                     </div>
                     <div class="step" data-step="2" onclick="goToStep(2)">
                         <div class="step-circle">2</div>
-                        <div class="step-label">Компоненты</div>
+                        <div class="step-label">Выбор нот</div>
                     </div>
                     <div class="step" data-step="3" onclick="goToStep(3)">
                         <div class="step-circle">3</div>
-                        <div class="step-label">Выбор нот</div>
+                        <div class="step-label">Позиции</div>
                     </div>
                     <div class="step" data-step="4" onclick="goToStep(4)">
                         <div class="step-circle">4</div>
-                        <div class="step-label">Позиции</div>
-                    </div>
-                    <div class="step" data-step="5" onclick="goToStep(5)">
-                        <div class="step-circle">5</div>
                         <div class="step-label">Создание</div>
                     </div>
                 </div>
                 
-                <!-- Шаг 1: Настройки -->
+                <!-- Шаг 1: Параметры и компоненты -->
                 <div id="step-1" class="step-content active">
                     <div class="form-section">
                         <h3>⚙️ Основные параметры</h3>
@@ -737,6 +822,7 @@
                             <div class="form-group">
                                 <label for="tube-length">Длина трубки (мм)</label>
                                 <input type="number" id="tube-length" value="450" min="200" max="800" step="10">
+                                <div id="calculated-length-info" style="font-size: 0.9em; color: #666; margin-top: 5px;"></div>
                             </div>
                             
                             <div class="form-group">
@@ -781,54 +867,44 @@
                         <div id="special-notes-list"></div>
                     </div>
                     
+                    <div class="form-section">
+                        <h3>🔧 Компоненты</h3>
+                        <div class="form-grid">
+                            <div class="form-group">
+                                <label>🎵 Трубка (обязательно)</label>
+                                <div class="components-grid" id="tubes-cards">
+                                    <div class="loading">Загрузка трубок...</div>
+                                </div>
+                            </div>
+                            
+                            <div class="form-group">
+                                <label>🎺 Мундштук (обязательно)</label>
+                                <div class="components-grid" id="mouthpieces-cards">
+                                    <div class="loading">Загрузка мундштуков...</div>
+                                </div>
+                            </div>
+                            
+                            <div class="form-group">
+                                <label>🎷 Раструб (опционально)</label>
+                                <div class="components-grid" id="bells-cards">
+                                    <div class="loading">Загрузка раструбов...</div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                    
                     <div class="wizard-actions">
                         <button class="btn btn-secondary" onclick="clearEditor()">
                             🗑️ Очистить
                         </button>
-                        <button class="btn btn-primary" onclick="goToStep(2)">
+                        <button class="btn btn-primary" onclick="validateComponentsAndGoToStep2()">
                             Далее →
                         </button>
                     </div>
                 </div>
                 
-                <!-- Шаг 2: Компоненты -->
+                <!-- Шаг 2: Выбор нот -->
                 <div id="step-2" class="step-content">
-                    <div class="form-section">
-                        <h3>🎵 Трубка (обязательно)</h3>
-                        <p>Выберите трубку. Ее параметры влияют на расчет позиций отверстий.</p>
-                        <div class="components-grid" id="tubes-cards">
-                            <div class="loading">Загрузка трубок...</div>
-                        </div>
-                    </div>
-                    
-                    <div class="form-section">
-                        <h3>🎺 Мундштук (опционально)</h3>
-                        <p>Мундштук влияет на энд-коррекцию и звучание инструмента.</p>
-                        <div class="components-grid" id="mouthpieces-cards">
-                            <div class="loading">Загрузка мундштуков...</div>
-                        </div>
-                    </div>
-                    
-                    <div class="form-section">
-                        <h3>🎷 Раструб (опционально)</h3>
-                        <p>Раструб влияет на тембр и громкость инструмента.</p>
-                        <div class="components-grid" id="bells-cards">
-                            <div class="loading">Загрузка раструбов...</div>
-                        </div>
-                    </div>
-                    
-                    <div class="wizard-actions">
-                        <button class="btn btn-secondary" onclick="goToStep(1)">
-                            ← Назад
-                        </button>
-                        <button class="btn btn-primary" onclick="validateComponentsAndGoToStep3()">
-                            Далее →
-                        </button>
-                    </div>
-                </div>
-                
-                <!-- Шаг 3: Выбор нот -->
-                <div id="step-3" class="step-content">
                     <div class="form-section">
                         <h3>🎵 Выберите ноты для дудикса</h3>
                         <p>Отметьте чекбоксами ноты, которые будут на вашем дудиксе (не более <span id="max-holes">6</span> нот)</p>
@@ -855,17 +931,17 @@
                     </div>
                     
                     <div class="wizard-actions">
-                        <button class="btn btn-secondary" onclick="goToStep(2)">
+                        <button class="btn btn-secondary" onclick="goToStep(1)">
                             ← Назад
                         </button>
-                        <button class="btn btn-primary" onclick="goToStep(4)">
+                        <button class="btn btn-primary" onclick="goToStep(3)">
                             Далее →
                         </button>
                     </div>
                 </div>
                 
-                <!-- Шаг 4: Позиции отверстий -->
-                <div id="step-4" class="step-content">
+                <!-- Шаг 3: Позиции отверстий -->
+                <div id="step-3" class="step-content">
                     <div class="form-section">
                         <h3>📐 Настройка позиций отверстий</h3>
                         <p>Введите позиции отверстий (мм от мундштука) или используйте авторасчет с учетом выбранных компонентов</p>
@@ -891,6 +967,7 @@
                                     <th>Позиция (мм)</th>
                                     <th>Диаметр (мм)</th>
                                     <th>Статус</th>
+                                    <th>Достоверность</th>
                                 </tr>
                             </thead>
                             <tbody id="preview-table">
@@ -900,17 +977,17 @@
                     </div>
                     
                     <div class="wizard-actions">
-                        <button class="btn btn-secondary" onclick="goToStep(3)">
+                        <button class="btn btn-secondary" onclick="goToStep(2)">
                             ← Назад
                         </button>
-                        <button class="btn btn-primary" onclick="goToStep(5)">
+                        <button class="btn btn-primary" onclick="goToStep(4)">
                             Далее →
                         </button>
                     </div>
                 </div>
                 
-                <!-- Шаг 5: Создание -->
-                <div id="step-5" class="step-content">
+                <!-- Шаг 4: Создание -->
+                <div id="step-4" class="step-content">
                     <div class="form-section">
                         <h3>✅ Проверка данных</h3>
                         <div id="final-preview">
@@ -918,10 +995,23 @@
                         </div>
                     </div>
                     
+                    <div class="form-section">
+                        <h3>📊 Статус проверки</h3>
+                        <div style="display: flex; align-items: center; gap: 15px; margin: 15px 0;">
+                            <label>
+                                <input type="checkbox" id="is-verified-checkbox">
+                                ✅ Инструмент проверен (данные могут использоваться для калибровки)
+                            </label>
+                        </div>
+                        <p style="color: #666; font-size: 0.9em;">
+                            Отметьте, если вы проверили звучание инструмента и подтверждаете точность позиций отверстий
+                        </p>
+                    </div>
+                    
                     <div id="create-error" class="error" style="display: none; color: #dc3545; padding: 10px; background: #f8d7da; border-radius: 5px; margin-top: 10px;"></div>
                     
                     <div class="wizard-actions">
-                        <button class="btn btn-secondary" onclick="goToStep(4)">
+                        <button class="btn btn-secondary" onclick="goToStep(3)">
                             ← Назад
                         </button>
                         <button class="btn btn-primary" onclick="saveDudex()" id="save-btn">
@@ -963,11 +1053,11 @@
     
     <script>
         // ========== ГЛОБАЛЬНЫЕ ПЕРЕМЕННЫЕ ==========
-        let selectedComponents = {
-            mouthpiece: null,
-            tube: null,
-            bell: null
-        };
+       let selectedComponents = {
+    mouthpiece: null,
+    tube: null,
+    bell: null
+};
         
         let selectedOctaves = [3, 4];
         let specialNotes = [];
@@ -976,6 +1066,7 @@
         let notePositions = {};
         let noteDiameters = {};
         let calculatedPositions = {};
+        let isVerified = false;
         
         // Для хранения данных компонентов
         let componentsData = {
@@ -1007,15 +1098,61 @@
         
         // ========== ИНИЦИАЛИЗАЦИЯ ==========
         document.addEventListener('DOMContentLoaded', function() {
+    console.log('DOM загружен, инициализируем приложение...');
+    
+    // Инициализируем selectedComponents
+    selectedComponents = {
+        mouthpiece: null,
+        tube: null,
+        bell: null
+    };
+    
+    console.log('Инициализировали selectedComponents:', selectedComponents);
+    
+    loadComponents();
+    generateAllPossibleNotes();
+    updateSpecialNotesList();
+    loadDudexes();
+    
+    // Слушатели изменений
+    document.getElementById('key').addEventListener('change', function() {
+        generateAllPossibleNotes();
+        calculateTubeLength();
+    });
+    document.getElementById('scale-type').addEventListener('change', function() {
+        generateAllPossibleNotes();
+        calculateTubeLength();
+    });
+    document.getElementById('hole-count').addEventListener('change', updateMaxHolesDisplay);
+    
+    // Слушатель для чекбокса проверки
+    document.getElementById('is-verified-checkbox').addEventListener('change', function() {
+        isVerified = this.checked;
+    });
+    
+    console.log('Инициализация завершена');
+});
+        document.addEventListener('DOMContentLoaded', function() {
             loadComponents();
             generateAllPossibleNotes();
             updateSpecialNotesList();
             loadDudexes();
             
             // Слушатели изменений
-            document.getElementById('key').addEventListener('change', generateAllPossibleNotes);
-            document.getElementById('scale-type').addEventListener('change', generateAllPossibleNotes);
+            document.getElementById('key').addEventListener('change', function() {
+                generateAllPossibleNotes();
+                calculateTubeLength();
+            });
+            document.getElementById('scale-type').addEventListener('change', function() {
+                generateAllPossibleNotes();
+                calculateTubeLength();
+            });
             document.getElementById('hole-count').addEventListener('change', updateMaxHolesDisplay);
+            
+            // Слушатель для чекбокса проверки
+            document.getElementById('is-verified-checkbox').addEventListener('change', function() {
+                isVerified = this.checked;
+            });
         });
         
         // ========== УПРАВЛЕНИЕ ШАГАМИ ==========
@@ -1031,25 +1168,196 @@
                 document.querySelector(`.step[data-step="${i}"]`).classList.add('completed');
             }
             
-            if (step === 3) {
+            if (step === 2) {
                 updateNoteSelector();
                 updateSelectedNotesPreview();
-            } else if (step === 4) {
+            } else if (step === 3) {
                 updatePositionsBuilder();
                 updatePreview();
-            } else if (step === 5) {
+            } else if (step === 4) {
                 updateFinalPreview();
             }
         }
         
-        function validateComponentsAndGoToStep3() {
-            // Проверяем, что выбрана трубка
-            if (!selectedComponents.tube || selectedComponents.tube === 'none') {
-                showNotification('Выберите трубку для продолжения', 'warning');
+       function validateComponentsAndGoToStep2() {
+    console.log('=== ПРОВЕРКА КОМПОНЕНТОВ ===');
+    console.log('selectedComponents:', selectedComponents);
+    
+    // Проверяем, что выбраны обязательные компоненты
+    if (!selectedComponents.tube) {
+        console.log('Трубка не выбрана, текущее значение:', selectedComponents.tube);
+        
+        // Попробуем выбрать автоматически еще раз
+        if (componentsData.tubes && componentsData.tubes.length > 0) {
+            const tube = componentsData.tubes[0];
+            selectedComponents.tube = parseInt(tube.id);
+            console.log('Автоматически выбрали трубку:', tube.id);
+            
+            // Визуально выделяем
+            const tubeCard = document.querySelector(`.component-card[data-type="tubes"][data-id="${tube.id}"]`);
+            if (tubeCard) {
+                tubeCard.classList.add('selected');
+            }
+            
+            // Показываем уведомление
+            showNotification(`Автоматически выбрана трубка: ${tube.name}`, 'info');
+            
+            // Пересчитываем длину
+            calculateTubeLength();
+            
+            // Переходим к следующему шагу
+            goToStep(2);
+            return;
+        } else {
+            showNotification('❌ Выберите трубку', 'warning');
+            return;
+        }
+    }
+    
+    if (!selectedComponents.mouthpiece) {
+        console.log('Мундштук не выбран, текущее значение:', selectedComponents.mouthpiece);
+        
+        // Попробуем выбрать автоматически
+        if (componentsData.mouthpieces && componentsData.mouthpieces.length > 0) {
+            const mouthpiece = componentsData.mouthpieces[0];
+            selectedComponents.mouthpiece = parseInt(mouthpiece.id);
+            console.log('Автоматически выбрали мундштук:', mouthpiece.id);
+            
+            const mouthpieceCard = document.querySelector(`.component-card[data-type="mouthpieces"][data-id="${mouthpiece.id}"]`);
+            if (mouthpieceCard) {
+                mouthpieceCard.classList.add('selected');
+            }
+            
+            showNotification(`Автоматически выбран мундштук: ${mouthpiece.name}`, 'info');
+            calculateTubeLength();
+            goToStep(2);
+            return;
+        } else {
+            showNotification('❌ Выберите мундштук', 'warning');
+            return;
+        }
+    }
+    
+    console.log('✅ Все компоненты выбраны! Переходим к шагу 2');
+    
+    // Рассчитываем длину трубки
+    calculateTubeLength();
+    
+    goToStep(2);
+
+    
+    // Проверяем, что выбраны обязательные компоненты
+    if (selectedComponents.tube === null || selectedComponents.tube === undefined) {
+        console.log('❌ Трубка не выбрана!');
+        showNotification('❌ Выберите трубку', 'warning');
+        
+        // Показываем где выбрать
+        const tubeSection = document.querySelector('.form-section:nth-child(3)');
+        if (tubeSection) {
+            tubeSection.scrollIntoView({ behavior: 'smooth' });
+        }
+        
+        // Подсвечиваем поле
+        const tubeCards = document.getElementById('tubes-cards');
+        if (tubeCards) {
+            tubeCards.style.border = '2px solid #dc3545';
+            tubeCards.style.padding = '10px';
+            tubeCards.style.borderRadius = '8px';
+            
+            setTimeout(() => {
+                tubeCards.style.border = '';
+                tubeCards.style.padding = '';
+            }, 3000);
+        }
+        
+        return;
+    }
+    
+    if (selectedComponents.mouthpiece === null || selectedComponents.mouthpiece === undefined) {
+        console.log('❌ Мундштук не выбран!');
+        showNotification('❌ Выберите мундштук', 'warning');
+        
+        // Показываем где выбрать
+        const mouthpieceSection = document.querySelector('.form-section:nth-child(3)');
+        if (mouthpieceSection) {
+            mouthpieceSection.scrollIntoView({ behavior: 'smooth' });
+        }
+        
+        // Подсвечиваем поле
+        const mouthpieceCards = document.getElementById('mouthpieces-cards');
+        if (mouthpieceCards) {
+            mouthpieceCards.style.border = '2px solid #dc3545';
+            mouthpieceCards.style.padding = '10px';
+            mouthpieceCards.style.borderRadius = '8px';
+            
+            setTimeout(() => {
+                mouthpieceCards.style.border = '';
+                mouthpieceCards.style.padding = '';
+            }, 3000);
+        }
+        
+        return;
+    }
+    
+    console.log('✅ Все компоненты выбраны!');
+    
+    // Рассчитываем длину трубки
+    calculateTubeLength();
+    
+    goToStep(2);
+}
+        
+        // ========== РАСЧЕТ ДЛИНЫ ТРУБКИ ==========
+        function calculateTubeLength() {
+            if (!selectedComponents.tube || !selectedComponents.mouthpiece) {
                 return;
             }
             
-            goToStep(3);
+            // Получаем данные компонентов
+            const tube = componentsData.tubes.find(t => t.id === selectedComponents.tube);
+            const mouthpiece = componentsData.mouthpieces.find(m => m.id === selectedComponents.mouthpiece);
+            const bell = selectedComponents.bell ? componentsData.bells.find(b => b.id === selectedComponents.bell) : null;
+            
+            if (!tube || !mouthpiece) return;
+            
+            // Базовая формула для расчета длины (упрощенная)
+            const key = document.getElementById('key').value;
+            const scaleType = document.getElementById('scale-type').value;
+            const holeCount = parseInt(document.getElementById('hole-count').value);
+            
+            // Базовая длина для тональности D
+            let baseLength = 450;
+            
+            // Корректировка по тональности
+            const keyLengths = {
+                'C': 520, 'D': 450, 'E': 400, 'F': 390,
+                'G': 350, 'A': 310, 'B': 280
+            };
+            baseLength = keyLengths[key] || baseLength;
+            
+            // Корректировка по диаметру трубки
+            if (tube.d_in) {
+                const diameterFactor = tube.d_in / 20; // Базовый диаметр 20мм
+                baseLength *= diameterFactor;
+            }
+            
+            // Добавляем длину мундштука
+            if (mouthpiece.length) {
+                baseLength += mouthpiece.length;
+            }
+            
+            // Добавляем длину раструба
+            if (bell && bell.length) {
+                baseLength += bell.length;
+            }
+            
+            // Отображаем рассчитанную длину
+            const lengthInput = document.getElementById('tube-length');
+            lengthInput.value = Math.round(baseLength);
+            
+            // Показываем информацию о расчете
+            const infoDiv = document.getElementById('calculated-length-info');
+            infoDiv.innerHTML = `~${Math.round(baseLength)} мм (рассчитано на основе компонентов)`;
         }
         
         // ========== НАСТРОЙКИ ==========
@@ -1168,131 +1476,235 @@
             showNotification('Особая нота удалена', 'info');
         }
         
-        // ========== КОМПОНЕНТЫ ==========
-        async function loadComponents() {
-            try {
-                const [mpRes, tubesRes, bellsRes] = await Promise.all([
-                    fetch('/api/mouthpieces'),
-                    fetch('/api/tubes'),
-                    fetch('/api/bells')
-                ]);
-                
-                const mpData = await mpRes.json();
-                const tubesData = await tubesRes.json();
-                const bellsData = await bellsRes.json();
-                
-                // Сохраняем данные компонентов
-                componentsData.mouthpieces = mpData.mouthpieces || [];
-                componentsData.tubes = tubesData.tubes || [];
-                componentsData.bells = bellsData.bells || [];
-                
-                // Рендерим компоненты
-                renderComponents('tubes', componentsData.tubes, true); // Трубка обязательна
-                renderComponents('mouthpieces', componentsData.mouthpieces);
-                renderComponents('bells', componentsData.bells);
-                
-            } catch (error) {
-                console.error('Ошибка загрузки компонентов:', error);
-                showNotification('Ошибка загрузки компонентов', 'error');
+      // ========== КОМПОНЕНТЫ ==========
+async function loadComponents() {
+    try {
+        const [mpRes, tubesRes, bellsRes] = await Promise.all([
+            fetch('/api/mouthpieces'),
+            fetch('/api/tubes'),
+            fetch('/api/bells')
+        ]);
+        
+        const mpData = await mpRes.json();
+        const tubesData = await tubesRes.json();
+        const bellsData = await bellsRes.json();
+        
+        // Сохраняем данные компонентов
+        componentsData.mouthpieces = mpData.mouthpieces || [];
+        componentsData.tubes = tubesData.tubes || [];
+        componentsData.bells = bellsData.bells || [];
+        
+        console.log('Загружены компоненты:', {
+            tubes: componentsData.tubes.length,
+            mouthpieces: componentsData.mouthpieces.length,
+            bells: componentsData.bells.length
+        });
+        
+        // Рендерим компоненты
+        renderComponents('tubes', componentsData.tubes);
+        renderComponents('mouthpieces', componentsData.mouthpieces);
+        renderComponents('bells', componentsData.bells);
+        
+        // После рендеринга автоматически выбираем компоненты
+        setTimeout(() => {
+            autoSelectComponents();
+        }, 100);
+        
+    } catch (error) {
+        console.error('Ошибка загрузки компонентов:', error);
+        showNotification('Ошибка загрузки компонентов', 'error');
+    }
+}
+
+function autoSelectComponents() {
+    console.log('=== АВТОМАТИЧЕСКИЙ ВЫБОР КОМПОНЕНТОВ ===');
+    console.log('componentsData.tubes:', componentsData.tubes);
+    console.log('componentsData.mouthpieces:', componentsData.mouthpieces);
+    
+    // Выбираем первую трубку
+    if (componentsData.tubes && componentsData.tubes.length > 0) {
+        const tube = componentsData.tubes[0];
+        console.log('Выбираем трубку:', tube);
+        
+        // Прямое обновление состояния
+        selectedComponents.tube = parseInt(tube.id);
+        
+        // Визуально выделяем карточку
+        const tubeCard = document.querySelector(`.component-card[data-type="tubes"][data-id="${tube.id}"]`);
+        if (tubeCard) {
+            tubeCard.classList.add('selected');
+            console.log('Трубка визуально выделена');
+        }
+        
+        showNotification(`Трубка выбрана: ${tube.name}`, 'info');
+    }
+    
+    // Выбираем первый мундштук
+    if (componentsData.mouthpieces && componentsData.mouthpieces.length > 0) {
+        const mouthpiece = componentsData.mouthpieces[0];
+        console.log('Выбираем мундштук:', mouthpiece);
+        
+        selectedComponents.mouthpiece = parseInt(mouthpiece.id);
+        
+        const mouthpieceCard = document.querySelector(`.component-card[data-type="mouthpieces"][data-id="${mouthpiece.id}"]`);
+        if (mouthpieceCard) {
+            mouthpieceCard.classList.add('selected');
+            console.log('Мундштук визуально выделен');
+        }
+        
+        showNotification(`Мундштук выбран: ${mouthpiece.name}`, 'info');
+    }
+    
+    // Для раструба выбираем "Без"
+    console.log('Устанавливаем раструб как "Без раструба"');
+    selectedComponents.bell = null;
+    
+    const bellCard = document.querySelector('.component-card[data-type="bells"][data-id="none"]');
+    if (bellCard) {
+        bellCard.classList.add('selected');
+        console.log('Раструб визуально выделен как "Без"');
+    }
+    
+    console.log('Итоговый selectedComponents:', selectedComponents);
+    
+    // Пересчитываем длину трубки
+    setTimeout(() => {
+        calculateTubeLength();
+    }, 200);
+}
+
+function renderComponents(type, components) {
+    const container = document.getElementById(`${type}-cards`);
+    if (!container) return;
+    
+    container.innerHTML = '';
+    
+    console.log(`Рендеринг ${type}:`, components);
+    
+    // Для раструба добавляем "Без"
+    if (type === 'bells') {
+        const noneCard = createComponentCard(null, type, 'Без раструба', 'Стандартная трубка', '');
+        container.appendChild(noneCard);
+    }
+    
+    if (components && components.length > 0) {
+        components.forEach(component => {
+            let subtitle = '';
+            let details = '';
+            
+            if (type === 'mouthpieces') {
+                subtitle = component.type || '';
+                details = `d_tip: ${component.d_tip || '?'}мм, δ_m: ${component.delta_m || '?'}мм`;
+            } else if (type === 'tubes') {
+                subtitle = getMaterialName(component.material) || '';
+                details = `Диаметр: ${component.d_in || '?'}мм, V_eff: ${component.v_eff ? (component.v_eff/1000).toFixed(1) : '343'} м/с`;
+            } else if (type === 'bells') {
+                subtitle = component.type || '';
+                details = component.type === 'none' ? 'Без раструба' : `ΔL: ${component.delta_L || 0}мм`;
             }
+            
+            const card = createComponentCard(
+                component.id, 
+                type, 
+                component.name, 
+                subtitle,
+                details,
+                false // не выделяем здесь
+            );
+            container.appendChild(card);
+        });
+    } else {
+        container.innerHTML = '<div class="loading">Нет доступных компонентов</div>';
+    }
+}
+    
+    console.log(`Рендеринг ${type} завершен, выбран:`, selectedComponents[type]);
+
+
+function createComponentCard(id, type, title, subtitle, details, isSelected = false) {
+    const card = document.createElement('div');
+    card.className = 'component-card';
+    if (isSelected) card.classList.add('selected');
+    
+    card.dataset.id = id !== null ? id : 'none';
+    card.dataset.type = type;
+    card.dataset.title = title;
+    card.dataset.subtitle = subtitle;
+    card.dataset.details = details;
+    
+    card.innerHTML = `
+        <h4>${title}</h4>
+        ${subtitle ? `<div class="component-details">${subtitle}</div>` : ''}
+        ${details ? `<div class="component-details">${details}</div>` : ''}
+    `;
+    
+    card.addEventListener('click', () => {
+        console.log('Клик по карточке:', {type, id, title});
+        if (id !== null) {
+            selectComponent(id, type, title);
+        } else {
+            // Для "Без раструба"
+            selectComponent(null, type, 'Без раструба');
         }
-        
-        function renderComponents(type, components, isRequired = false) {
-            const container = document.getElementById(`${type}-cards`);
-            if (!container) return;
-            
-            container.innerHTML = '';
-            
-            // Для обязательного компонента не добавляем "Без"
-            if (!isRequired) {
-                const noneCard = createComponentCard('none', type, `Без ${getComponentName(type)}`, 'Не использовать', 'none');
-                container.appendChild(noneCard);
-            }
-            
-            // Выбираем первый компонент по умолчанию для трубок
-            let defaultSelected = isRequired && components.length > 0 ? components[0].id : null;
-            
-            components.forEach(component => {
-                let subtitle = '';
-                let details = '';
-                
-                if (type === 'mouthpieces') {
-                    subtitle = component.type || '';
-                    details = `Диаметр: ${component.inner_diameter || '?'}мм`;
-                } else if (type === 'tubes') {
-                    subtitle = component.material || '';
-                    details = `Диаметр: ${component.inner_diameter || '?'}мм`;
-                } else if (type === 'bells') {
-                    subtitle = component.type || '';
-                    details = component.type === 'none' ? 'Без раструба' : `Расширение: ${component.expansion_ratio || 1.0}`;
-                }
-                
-                const card = createComponentCard(
-                    component.id, 
-                    type, 
-                    component.name, 
-                    subtitle,
-                    details,
-                    component.id === defaultSelected // Выделяем по умолчанию если нужно
-                );
-                container.appendChild(card);
-                
-                // Если это трубка и она выбрана по умолчанию
-                if (isRequired && component.id === defaultSelected) {
-                    selectedComponents[type] = component.id;
-                }
-            });
-        }
-        
-        function createComponentCard(id, type, title, subtitle, details, isSelected = false) {
-            const card = document.createElement('div');
-            card.className = 'component-card';
-            if (isSelected) card.classList.add('selected');
-            
-            card.dataset.id = id;
-            card.dataset.type = type;
-            card.dataset.title = title;
-            card.dataset.subtitle = subtitle;
-            card.dataset.details = details;
-            
-            card.innerHTML = `
-                <h4>${title}</h4>
-                ${subtitle ? `<div class="component-details">${subtitle}</div>` : ''}
-                ${details ? `<div class="component-details">${details}</div>` : ''}
-            `;
-            
-            card.addEventListener('click', () => selectComponent(id, type, title));
-            
-            return card;
-        }
-        
-        function selectComponent(id, type, title) {
-            console.log(`Выбор компонента: ${type} = ${id} (${title})`);
-            
-            selectedComponents[type] = id;
-            
-            // Снимаем выделение со всех карточек этого типа
-            const allCards = document.querySelectorAll(`.component-card[data-type="${type}"]`);
-            allCards.forEach(card => card.classList.remove('selected'));
-            
-            // Выделяем выбранную карточку
-            const selectedCard = document.querySelector(`.component-card[data-type="${type}"][data-id="${id}"]`);
-            if (selectedCard) {
-                selectedCard.classList.add('selected');
-                showNotification(`${getComponentName(type)} выбран: ${title}`, 'info');
-            }
-            
-            console.log('Текущие выбранные компоненты:', selectedComponents);
-        }
-        
-        function getComponentName(type) {
-            const names = {
-                'mouthpieces': 'мундштук',
-                'tubes': 'трубка',
-                'bells': 'раструб'
-            };
-            return names[type] || type;
-        }
+    });
+    
+    return card;
+}
+
+function selectComponent(id, type, title) {
+    console.log(`Выбор компонента: ${type} = ${id} (${title})`);
+    
+    // Сохраняем ID компонента
+    if (id === null) {
+        selectedComponents[type] = null;
+    } else {
+        // Преобразуем id в число
+        selectedComponents[type] = parseInt(id);
+    }
+    
+    console.log('Обновляем selectedComponents:', selectedComponents);
+    
+    // Снимаем выделение со всех карточек этого типа
+    const allCards = document.querySelectorAll(`.component-card[data-type="${type}"]`);
+    allCards.forEach(card => card.classList.remove('selected'));
+    
+    // Выделяем выбранную карточку
+    const cardId = id !== null ? id : 'none';
+    const selectedCard = document.querySelector(`.component-card[data-type="${type}"][data-id="${cardId}"]`);
+    if (selectedCard) {
+        selectedCard.classList.add('selected');
+        console.log(`Выделили карточку ${type} с ID ${cardId}`);
+        showNotification(`${getComponentName(type)} выбран: ${title}`, 'info');
+    } else {
+        console.warn(`Карточка ${type} с ID ${cardId} не найдена!`);
+    }
+    
+    // Пересчитываем длину трубки
+    calculateTubeLength();
+    
+    console.log('Текущие выбранные компоненты:', selectedComponents);
+}
+
+function getComponentName(type) {
+    const names = {
+        'mouthpieces': 'мундштук',
+        'tubes': 'трубка',
+        'bells': 'раструб'
+    };
+    return names[type] || type;
+}
+
+function getMaterialName(materialCode) {
+    const materials = {
+        'pvc': 'ПВХ',
+        'bamboo': 'Бамбук',
+        'wood': 'Дерево',
+        'metal': 'Металл',
+        'plastic': 'Пластик',
+        'composite': 'Композит'
+    };
+    return materials[materialCode] || materialCode;
+}
         
         // ========== ВЫБОР НОТ ==========
         function updateNoteSelector() {
@@ -1385,7 +1797,7 @@
             container.innerHTML = '';
             
             if (selectedNotes.length === 0) {
-                container.innerHTML = '<p style="text-align: center; color: #666;">Сначала выберите ноты на шаге 3</p>';
+                container.innerHTML = '<p style="text-align: center; color: #666;">Сначала выберите ноты на шаге 2</p>';
                 return;
             }
             
@@ -1471,54 +1883,41 @@
             const tubeLength = parseInt(document.getElementById('tube-length').value);
             
             if (selectedNotes.length === 0) {
-                showNotification('Сначала выберите ноты на шаге 3', 'warning');
+                showNotification('Сначала выберите ноты на шаге 2', 'warning');
                 return;
             }
             
-            // Проверяем, что выбрана трубка
-            if (!selectedComponents.tube || selectedComponents.tube === 'none') {
-                showNotification('Сначала выберите трубку на шаге 2', 'warning');
+            // Проверяем, что выбраны обязательные компоненты
+            if (!selectedComponents.tube) {
+                showNotification('Выберите трубку', 'warning');
+                return;
+            }
+            if (!selectedComponents.mouthpiece) {
+                showNotification('Выберите мундштук', 'warning');
                 return;
             }
             
             try {
-                // Получаем данные выбранной трубки
-                const tubeResponse = await fetch(`/api/tubes/${selectedComponents.tube}`);
-                const tubeData = await tubeResponse.json();
+                // Получаем данные компонентов
+                const tube = componentsData.tubes.find(t => t.id === selectedComponents.tube);
+                const mouthpiece = componentsData.mouthpieces.find(m => m.id === selectedComponents.mouthpiece);
                 
-                if (!tubeResponse.ok) {
-                    showNotification('Ошибка загрузки данных трубки', 'error');
+                if (!tube || !mouthpiece) {
+                    showNotification('Ошибка загрузки данных компонентов', 'error');
                     return;
                 }
                 
                 showNotification('Выполняется расчет с учетом компонентов...', 'info');
                 document.getElementById('calculate-btn').classList.add('calculating');
                 
-                // Получаем данные мундштука если выбран
-                let mouthpieceData = null;
-                if (selectedComponents.mouthpiece && selectedComponents.mouthpiece !== 'none') {
-                    try {
-                        const mpResponse = await fetch(`/api/mouthpieces/${selectedComponents.mouthpiece}`);
-                        mouthpieceData = await mpResponse.json();
-                    } catch (e) {
-                        console.log('Ошибка загрузки мундштука:', e);
-                    }
-                }
-                
                 // Подготавливаем данные для расчета
                 const calculationData = {
                     notes: selectedNotes,
                     tube_length: tubeLength,
-                    tube_diameter: tubeData.inner_diameter || 20.0,
-                    tube_material: tubeData.material || 'pvc'
+                    tube_diameter: tube.d_in || 20.0,
+                    tube_material: tube.material || 'pvc',
+                    mouthpiece_end_correction: mouthpiece.end_correction || 15.0
                 };
-                
-                // Добавляем данные мундштука если есть
-                if (mouthpieceData) {
-                    calculationData.mouthpiece_end_correction = mouthpieceData.end_correction || 15.0;
-                    calculationData.mouthpiece_type = mouthpieceData.type;
-                    calculationData.mouthpiece_material = mouthpieceData.material;
-                }
                 
                 // Используем продвинутый калькулятор
                 const response = await fetch('/api/calculate/advanced', {
@@ -1565,16 +1964,24 @@
         async function calculateSingleNote(note) {
             const tubeLength = parseInt(document.getElementById('tube-length').value);
             
-            // Проверяем, что выбрана трубка
-            if (!selectedComponents.tube || selectedComponents.tube === 'none') {
-                showNotification('Сначала выберите трубку на шаге 2', 'warning');
+            // Проверяем, что выбраны обязательные компоненты
+            if (!selectedComponents.tube) {
+                showNotification('Выберите трубку', 'warning');
+                return;
+            }
+            if (!selectedComponents.mouthpiece) {
+                showNotification('Выберите мундштук', 'warning');
                 return;
             }
             
             try {
-                // Получаем данные выбранной трубки
-                const tubeResponse = await fetch(`/api/tubes/${selectedComponents.tube}`);
-                const tubeData = await tubeResponse.json();
+                // Получаем данные компонентов
+                const tube = componentsData.tubes.find(t => t.id === selectedComponents.tube);
+                
+                if (!tube) {
+                    showNotification('Ошибка загрузки данных трубки', 'error');
+                    return;
+                }
                 
                 // Используем API калькулятора
                 const response = await fetch('/api/calculate/single', {
@@ -1583,8 +1990,8 @@
                     body: JSON.stringify({
                         note: note,
                         tube_length: tubeLength,
-                        tube_diameter: tubeData.inner_diameter || 20.0,
-                        tube_material: tubeData.material || 'pvc'
+                        tube_diameter: tube.d_in || 20.0,
+                        tube_material: tube.material || 'pvc'
                     })
                 });
                 
@@ -1633,12 +2040,28 @@
                 const calculation = calculatedPositions[note];
                 
                 let status = '';
+                let statusClass = '';
+                let confidence = 0;
+                
                 if (notePositions[note]) {
                     status = '✅ Ручной';
+                    statusClass = 'note-status-high';
+                    confidence = 100;
                 } else if (calculation) {
-                    status = calculation.source === 'calibrated' ? '✅ Проверенный' : '📐 Расчетный';
+                    if (calculation.source === 'calibrated') {
+                        status = '✅ Проверенный';
+                        statusClass = 'note-status-high';
+                        confidence = calculation.confidence ? Math.round(calculation.confidence * 100) : 90;
+                    } else {
+                        status = '📐 Расчетный';
+                        statusClass = calculation.confidence > 0.8 ? 'note-status-high' : 
+                                     calculation.confidence > 0.5 ? 'note-status-medium' : 'note-status-low';
+                        confidence = calculation.confidence ? Math.round(calculation.confidence * 100) : 70;
+                    }
                 } else {
                     status = '⚠️ Не задан';
+                    statusClass = 'note-status-low';
+                    confidence = 0;
                 }
                 
                 const row = document.createElement('tr');
@@ -1647,7 +2070,8 @@
                     <td><strong>${note}</strong> ${isSpecial ? '🎵' : ''}</td>
                     <td>${position ? `${position} мм` : '—'}</td>
                     <td>${diameter} мм</td>
-                    <td>${status}</td>
+                    <td class="${statusClass}">${status}</td>
+                    <td>${confidence}%</td>
                 `;
                 container.appendChild(row);
             });
@@ -1662,6 +2086,14 @@
             const scaleType = document.getElementById('scale-type').value;
             const length = document.getElementById('tube-length').value;
             const holes = selectedNotes.length;
+            
+            // Получаем данные компонентов для отображения
+            const tube = selectedComponents.tube ? 
+                componentsData.tubes.find(t => t.id === selectedComponents.tube) : null;
+            const mouthpiece = selectedComponents.mouthpiece ? 
+                componentsData.mouthpieces.find(m => m.id === selectedComponents.mouthpiece) : null;
+            const bell = selectedComponents.bell ? 
+                componentsData.bells.find(b => b.id === selectedComponents.bell) : null;
             
             let html = `
                 <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(300px, 1fr)); gap: 20px;">
@@ -1687,32 +2119,63 @@
                             <span>Отверстий:</span>
                             <strong>${holes}</strong>
                         </div>
+                        <div style="display: flex; justify-content: space-between; padding: 8px 0; border-bottom: 1px dashed #dee2e6;">
+                            <span>Октавы:</span>
+                            <strong>${selectedOctaves.join(', ')}</strong>
+                        </div>
                     </div>
                     <div>
                         <h4 style="color: #2E7D32; margin-bottom: 15px;">Компоненты</h4>
             `;
             
             // Отображаем выбранные компоненты
-            ['tube', 'mouthpiece', 'bell'].forEach(type => {
-                const componentId = selectedComponents[type];
-                let componentName = 'Не выбран';
-                
-                if (componentId && componentId !== 'none') {
-                    const selectedCard = document.querySelector(`.component-card[data-type="${type}"][data-id="${componentId}"]`);
-                    if (selectedCard) {
-                        componentName = selectedCard.dataset.title;
-                    }
-                } else if (componentId === 'none') {
-                    componentName = 'Без ' + getComponentName(type + 's');
-                }
-                
+            if (tube) {
                 html += `
                     <div style="display: flex; justify-content: space-between; padding: 8px 0; border-bottom: 1px dashed #dee2e6;">
-                        <span>${getComponentName(type + 's')}:</span>
-                        <strong>${componentName}</strong>
+                        <span>Трубка:</span>
+                        <strong>${tube.name}</strong>
                     </div>
                 `;
-            });
+            } else if (selectedComponents.tube === null) {
+                html += `
+                    <div style="display: flex; justify-content: space-between; padding: 8px 0; border-bottom: 1px dashed #dee2e6;">
+                        <span>Трубка:</span>
+                        <strong>Не выбрана</strong>
+                    </div>
+                `;
+            }
+            
+            if (mouthpiece) {
+                html += `
+                    <div style="display: flex; justify-content: space-between; padding: 8px 0; border-bottom: 1px dashed #dee2e6;">
+                        <span>Мундштук:</span>
+                        <strong>${mouthpiece.name}</strong>
+                    </div>
+                `;
+            } else if (selectedComponents.mouthpiece === null) {
+                html += `
+                    <div style="display: flex; justify-content: space-between; padding: 8px 0; border-bottom: 1px dashed #dee2e6;">
+                        <span>Мундштук:</span>
+                        <strong>Не выбран</strong>
+                    </div>
+                `;
+            }
+            
+            if (bell) {
+                html += `
+                    <div style="display: flex; justify-content: space-between; padding: 8px 0; border-bottom: 1px dashed #dee2e6;">
+                        <span>Раструб:</span>
+                        <strong>${bell.name}</strong>
+                    </div>
+                `;
+            } else if (selectedComponents.bell === null) {
+                html += `
+                    <div style="display: flex; justify-content: space-between; padding: 8px 0; border-bottom: 1px dashed #dee2e6;">
+                        <span>Раструб:</span>
+                        <strong>Без раструба</strong>
+                    </div>
+                `;
+            }
             
             html += `</div></div>`;
             
@@ -1773,16 +2236,20 @@
                 return;
             }
             
-            // Проверяем выбор трубки (обязательно)
-            if (!selectedComponents.tube || selectedComponents.tube === 'none') {
+            // Проверяем обязательные компоненты
+            if (!selectedComponents.tube) {
                 showError('Выберите трубку');
+                return;
+            }
+            if (!selectedComponents.mouthpiece) {
+                showError('Выберите мундштук');
                 return;
             }
             
             // Подготавливаем данные компонентов
             const tubeId = selectedComponents.tube;
-            const mouthpieceId = selectedComponents.mouthpiece === 'none' ? null : selectedComponents.mouthpiece;
-            const bellId = selectedComponents.bell === 'none' ? null : selectedComponents.bell;
+            const mouthpieceId = selectedComponents.mouthpiece;
+            const bellId = selectedComponents.bell !== null ? selectedComponents.bell : null;
             
             console.log('Сохранение компонентов:', {
                 tube: tubeId,
@@ -1827,7 +2294,7 @@
                 bell_id: bellId,
                 custom_notes: JSON.stringify(selectedNotes),
                 holes_data: JSON.stringify(holesData),
-                is_verified: false
+                is_verified: isVerified
             };
             
             console.log('Отправляемые данные:', dudexData);
@@ -1871,7 +2338,7 @@
                     data.flutes.forEach(dudex => {
                         const statusBadge = dudex.is_verified 
                             ? '<span class="verified-badge">✅ Проверен</span>'
-                            : '<span style="color: #666; font-size: 0.9em;">Черновик</span>';
+                            : '<span class="unverified-badge">📝 Черновик</span>';
                         
                         const row = document.createElement('tr');
                         row.innerHTML = `
@@ -1886,7 +2353,7 @@
                             <td>${dudex.hole_count || 6}</td>
                             <td>${statusBadge}</td>
                             <td>
-                                <button onclick="viewDudex(${dudex.id})" style="margin-right: 5px; padding: 5px 10px; background: #2196F3; color: white; border: none; border-radius: 5px; cursor: pointer;">
+                                <button onclick="showDudexCard(${dudex.id})" style="margin-right: 5px; padding: 5px 10px; background: #17a2b8; color: white; border: none; border-radius: 5px; cursor: pointer;">
                                     👁️
                                 </button>
                                 <button onclick="downloadTemplate(${dudex.id})" style="margin-right: 5px; padding: 5px 10px; background: #4CAF50; color: white; border: none; border-radius: 5px; cursor: pointer;">
@@ -1916,8 +2383,142 @@
             }
         }
         
-        function viewDudex(id) {
-            window.location.href = `/flute/${id}`;
+        // ========== КАРТОЧКА ДУДИКСА ==========
+        async function showDudexCard(id) {
+            try {
+                const response = await fetch(`/api/flutes/${id}`);
+                const dudex = await response.json();
+                
+                if (!response.ok) {
+                    showNotification('Ошибка загрузки данных дудикса', 'error');
+                    return;
+                }
+                
+                // Создаем оверлей
+                const overlay = document.createElement('div');
+                overlay.className = 'overlay';
+                overlay.onclick = function() {
+                    document.body.removeChild(overlay);
+                    document.body.removeChild(card);
+                };
+                
+                // Создаем карточку
+                const card = document.createElement('div');
+                card.className = 'dudex-card';
+                
+                // Получаем данные компонентов
+                let componentsInfo = '';
+                if (dudex.tube) {
+                    componentsInfo += `<p><strong>Трубка:</strong> ${dudex.tube.name} (${getMaterialName(dudex.tube.material)}, ⌀${dudex.tube.d_in}мм)</p>`;
+                }
+                if (dudex.mouthpiece) {
+                    componentsInfo += `<p><strong>Мундштук:</strong> ${dudex.mouthpiece.name} (${dudex.mouthpiece.type})</p>`;
+                }
+                if (dudex.bell) {
+                    componentsInfo += `<p><strong>Раструб:</strong> ${dudex.bell.name} (${dudex.bell.type})</p>`;
+                }
+                
+                // Получаем ноты
+                let notesInfo = '';
+                if (dudex.holes && dudex.holes.length > 0) {
+                    const notes = dudex.holes.map(h => h.note).join(', ');
+                    notesInfo = `<p><strong>Ноты:</strong> ${notes}</p>`;
+                }
+                
+                card.innerHTML = `
+                    <div class="dudex-card-header">
+                        <h2>🎷 ${dudex.name}</h2>
+                        <button onclick="closeDudexCard()" style="background: none; border: none; color: white; font-size: 1.5em; cursor: pointer;">×</button>
+                    </div>
+                    <div class="dudex-card-content">
+                        <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(250px, 1fr)); gap: 20px;">
+                            <div>
+                                <h3>Основные параметры</h3>
+                                <p><strong>Тональность:</strong> ${dudex.key}</p>
+                                <p><strong>Лад:</strong> ${getScaleName(dudex.scale)}</p>
+                                <p><strong>Длина:</strong> ${dudex.tube_length} мм</p>
+                                <p><strong>Отверстий:</strong> ${dudex.hole_count}</p>
+                                <p><strong>Статус:</strong> ${dudex.is_verified ? '✅ Проверен' : '📝 Черновик'}</p>
+                                <p><strong>Создан:</strong> ${new Date(dudex.created_at).toLocaleString('ru-RU')}</p>
+                            </div>
+                            <div>
+                                <h3>Компоненты</h3>
+                                ${componentsInfo || '<p>Компоненты не указаны</p>'}
+                            </div>
+                        </div>
+                        <div style="margin-top: 20px;">
+                            <h3>Ноты</h3>
+                            ${notesInfo || '<p>Ноты не указаны</p>'}
+                        </div>
+                        ${dudex.holes && dudex.holes.length > 0 ? `
+                        <div style="margin-top: 20px;">
+                            <h3>Позиции отверстий</h3>
+                            <table class="note-table" style="width: 100%;">
+                                <thead>
+                                    <tr>
+                                        <th>Нота</th>
+                                        <th>Позиция (мм)</th>
+                                        <th>Диаметр (мм)</th>
+                                        <th>Статус</th>
+                                    </tr>
+                                </thead>
+                                <tbody>
+                                    ${dudex.holes.map(hole => `
+                                        <tr>
+                                            <td><strong>${hole.note}</strong></td>
+                                            <td>${hole.position} мм</td>
+                                            <td>${hole.diameter || 8.0} мм</td>
+                                            <td>${hole.is_calibrated ? '✅ Проверено' : '📐 Расчет'}</td>
+                                        </tr>
+                                    `).join('')}
+                                </tbody>
+                            </table>
+                        </div>
+                        ` : ''}
+                    </div>
+                    <div class="dudex-card-footer">
+                        <button class="btn btn-secondary" onclick="closeDudexCard()">Закрыть</button>
+                        <button class="btn btn-success" onclick="downloadTemplate(${id})">📥 Скачать SVG</button>
+                        ${dudex.is_verified ? '' : `
+                        <button class="btn btn-primary" onclick="markAsVerified(${id})">✅ Отметить как проверенный</button>
+                        `}
+                        <button class="btn btn-danger" onclick="deleteDudex(${id})">🗑️ Удалить</button>
+                    </div>
+                `;
+                
+                document.body.appendChild(overlay);
+                document.body.appendChild(card);
+                
+            } catch (error) {
+                showNotification(`Ошибка загрузки карточки: ${error.message}`, 'error');
+            }
+        }
+        
+        function closeDudexCard() {
+            const overlay = document.querySelector('.overlay');
+            const card = document.querySelector('.dudex-card');
+            if (overlay) document.body.removeChild(overlay);
+            if (card) document.body.removeChild(card);
+        }
+        
+        async function markAsVerified(id) {
+            try {
+                const response = await fetch(`/api/flutes/${id}`, {
+                    method: 'PUT',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify({ is_verified: true })
+                });
+                
+                if (response.ok) {
+                    showNotification('Дудикс отмечен как проверенный', 'success');
+                    closeDudexCard();
+                    loadDudexes();
+                } else {
+                    showNotification('Ошибка при обновлении статуса', 'error');
+                }
+            } catch (error) {
+                showNotification(`Ошибка сети: ${error.message}`, 'error');
+            }
         }
         
         function downloadTemplate(id) {
@@ -1937,6 +2538,7 @@
                 if (response.ok) {
                     showNotification('Дудикс удален', 'success');
                     loadDudexes();
+                    closeDudexCard();
                 } else {
                     showNotification('Ошибка при удалении', 'error');
                 }
@@ -1952,6 +2554,7 @@
             document.getElementById('scale-type').value = 'minor';
             document.getElementById('tube-length').value = '450';
             document.getElementById('hole-count').value = '6';
+            document.getElementById('is-verified-checkbox').checked = false;
             
             selectedOctaves = [3, 4];
             specialNotes = [];
@@ -1960,6 +2563,7 @@
             notePositions = {};
             noteDiameters = {};
             calculatedPositions = {};
+            isVerified = false;
             
             document.querySelectorAll('.octave-btn').forEach(btn => {
                 btn.classList.toggle('active', [3, 4].includes(parseInt(btn.dataset.octave)));
@@ -2001,7 +2605,7 @@
             
             setTimeout(() => {
                 notification.style.animation = 'slideInRight 0.3s ease reverse';
-                setTimeout(() => notification.remove(), 300);
+                setTimeout(() => notification.remove(), 3000);
             }, 3000);
         }
         

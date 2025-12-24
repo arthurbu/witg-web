@@ -1,5 +1,5 @@
 """
-Веб-маршруты WITG
+Веб-маршруты WITG с обновленными моделями
 """
 
 from flask import render_template, jsonify, request, send_file
@@ -17,7 +17,7 @@ if parent_dir not in sys.path:
 
 # Импорты из нашей структуры
 try:
-    from database.models import db, Mouthpiece, Tube, Bell, Flute, Hole
+    from database.models import db, Mouthpiece, Tube, Bell, Flute, Hole, CalibrationData
     MODELS_LOADED = True
     print("✅ Модели загружены успешно")
 except ImportError as e:
@@ -47,6 +47,9 @@ except ImportError as e:
     class Hole:
         @staticmethod
         def query(): return type('Query', (), {'all': lambda: [], 'filter_by': lambda **kwargs: type('Query', (), {'all': lambda: []})()})()
+    class CalibrationData:
+        @staticmethod
+        def query(): return type('Query', (), {'all': lambda: [], 'filter_by': lambda **kwargs: type('Query', (), {'all': lambda: []})()})()
 
 # Пытаемся импортировать калькулятор
 try:
@@ -68,7 +71,7 @@ def register_routes(app):
     
     @app.route('/flute/<int:flute_id>')
     def view_flute(flute_id):
-        return f"Страница дудикса {flute_id}"
+        return render_template('flute_view.html')
     
     @app.route('/manage-components')
     def manage_components():
@@ -129,7 +132,8 @@ def register_routes(app):
                 bell_id=data.get('bell_id'),
                 custom_notes=data.get('custom_notes', '[]'),
                 holes_data=data.get('holes_data', '[]'),
-                is_verified=data.get('is_verified', False)
+                is_verified=data.get('is_verified', False),
+                temperature=data.get('temperature', 20.0)
             )
             
             db.session.add(flute)
@@ -144,7 +148,10 @@ def register_routes(app):
                         position=hole_data.get('position'),
                         diameter=hole_data.get('diameter', 8.0),
                         angle=hole_data.get('angle', 0),
-                        is_calibrated=hole_data.get('is_calibrated', False)
+                        is_calibrated=hole_data.get('is_calibrated', False),
+                        acoustic_length_correction=hole_data.get('acoustic_length_correction'),
+                        is_under_cut=hole_data.get('is_under_cut', False),
+                        chimney_height=hole_data.get('chimney_height')
                     )
                     db.session.add(hole)
                 db.session.commit()
@@ -170,6 +177,27 @@ def register_routes(app):
             db.session.commit()
             
             return jsonify({'success': True, 'message': 'Дудикс удален'})
+        except Exception as e:
+            return jsonify({'error': str(e)}), 500
+    
+    @app.route('/api/flutes/<int:flute_id>', methods=['PUT'])
+    def update_flute(flute_id):
+        try:
+            if not MODELS_LOADED:
+                return jsonify({'error': 'Модели не загружены'}), 500
+            
+            flute = Flute.query.get_or_404(flute_id)
+            data = request.json
+            
+            if 'name' in data:
+                flute.name = data['name']
+            if 'is_verified' in data:
+                flute.is_verified = data['is_verified']
+            if 'holes_data' in data:
+                flute.holes_data = data['holes_data']
+            
+            db.session.commit()
+            return jsonify({'success': True, 'message': 'Дудикс обновлен', 'flute': flute.to_dict()})
         except Exception as e:
             return jsonify({'error': str(e)}), 500
     
@@ -231,17 +259,30 @@ def register_routes(app):
                 name=data['name'],
                 type=data.get('type'),
                 brand=data.get('brand'),
-                inner_diameter=data.get('inner_diameter'),
-                outer_diameter=data.get('outer_diameter'),
-                length=data.get('length'),
-                end_correction=data.get('end_correction'),
+                model=data.get('model'),
+                d_tip=data.get('d_tip'),
+                d_out=data.get('d_out'),
+                L_m=data.get('L_m'),
+                L_cyl=data.get('L_cyl'),
+                baffle=data.get('baffle'),
+                chamber_depth=data.get('chamber_depth'),
+                delta_m=data.get('delta_m'),
+                L_calib=data.get('L_calib'),
+                d_calib=data.get('d_calib'),
+                f_meas=data.get('f_meas'),
+                temperature=data.get('temperature'),
+                material=data.get('material'),
                 embouchure=data.get('embouchure'),
-                material=data.get('material')
+                notes=data.get('notes')
             )
             
             db.session.add(mouthpiece)
             db.session.commit()
-            return jsonify({'success': True, 'message': 'Мундштук создан', 'mouthpiece': mouthpiece.to_dict()})
+            return jsonify({
+                'success': True, 
+                'message': 'Мундштук создан', 
+                'mouthpiece': mouthpiece.to_dict()
+            })
         except Exception as e:
             return jsonify({'error': str(e)}), 500
     
@@ -267,22 +308,35 @@ def register_routes(app):
             data = request.json
             if 'name' not in data:
                 return jsonify({'error': 'Отсутствует название'}), 400
-            if 'inner_diameter' not in data:
+            if 'd_in' not in data:
                 return jsonify({'error': 'Отсутствует внутренний диаметр'}), 400
             
             tube = Tube(
                 name=data['name'],
                 material=data.get('material'),
-                inner_diameter=data['inner_diameter'],
-                outer_diameter=data.get('outer_diameter'),
+                length=data.get('length', 500.0),
+                d_in=data['d_in'],
+                d_out=data.get('d_out'),
                 wall_thickness=data.get('wall_thickness'),
-                expansion=data.get('expansion', 1.0),
-                standard_length=data.get('standard_length', 500.0)
+                taper=data.get('taper', 0.0),
+                form=data.get('form', 'round'),
+                roughness=data.get('roughness'),
+                v_air=data.get('v_air', 34300.0),
+                v_eff=data.get('v_eff', 34300.0),
+                damping=data.get('damping'),
+                f_tube=data.get('f_tube'),
+                L_total=data.get('L_total'),
+                density=data.get('density'),
+                thermal_coeff=data.get('thermal_coeff')
             )
             
             db.session.add(tube)
             db.session.commit()
-            return jsonify({'success': True, 'message': 'Трубка создана', 'tube': tube.to_dict()})
+            return jsonify({
+                'success': True, 
+                'message': 'Трубка создана', 
+                'tube': tube.to_dict()
+            })
         except Exception as e:
             return jsonify({'error': str(e)}), 500
     
@@ -312,16 +366,28 @@ def register_routes(app):
             bell = Bell(
                 name=data['name'],
                 type=data.get('type', 'flare'),
-                material=data.get('material'),
+                material=data.get('material', 'same'),
                 start_diameter=data.get('start_diameter'),
                 end_diameter=data.get('end_diameter'),
                 length=data.get('length'),
-                expansion_ratio=data.get('expansion_ratio')
+                wall_thickness=data.get('wall_thickness'),
+                expansion_ratio=data.get('expansion_ratio'),
+                flare_angle=data.get('flare_angle'),
+                delta_L=data.get('delta_L'),
+                acoustic_effect=data.get('acoustic_effect'),
+                profile=data.get('profile'),
+                f_no_bell=data.get('f_no_bell'),
+                f_with_bell=data.get('f_with_bell'),
+                v_sound=data.get('v_sound', 34300.0)
             )
             
             db.session.add(bell)
             db.session.commit()
-            return jsonify({'success': True, 'message': 'Раструб создан', 'bell': bell.to_dict()})
+            return jsonify({
+                'success': True, 
+                'message': 'Раструб создан', 
+                'bell': bell.to_dict()
+            })
         except Exception as e:
             return jsonify({'error': str(e)}), 500
     
@@ -335,6 +401,106 @@ def register_routes(app):
             db.session.delete(bell)
             db.session.commit()
             return jsonify({'success': True, 'message': 'Раструб удален'})
+        except Exception as e:
+            return jsonify({'error': str(e)}), 500
+    
+    # ========== API ДЛЯ КАЛИБРАЦИОННЫХ ДАННЫХ ==========
+    
+    @app.route('/api/calibration', methods=['POST'])
+    def add_calibration():
+        try:
+            if not MODELS_LOADED:
+                return jsonify({'error': 'Модели не загружены'}), 500
+            
+            data = request.json
+            
+            if 'note' not in data or 'position' not in data:
+                return jsonify({'error': 'Отсутствует нота или позиция'}), 400
+            
+            calibration = CalibrationData(
+                note=data['note'],
+                frequency=data.get('frequency'),
+                position=data['position'],
+                diameter=data.get('diameter', 8.0),
+                tube_diameter=data.get('tube_diameter'),
+                tube_length=data.get('tube_length'),
+                tube_material=data.get('tube_material'),
+                mouthpiece_delta_m=data.get('mouthpiece_delta_m'),
+                mouthpiece_type=data.get('mouthpiece_type'),
+                bell_delta_L=data.get('bell_delta_L'),
+                temperature=data.get('temperature', 20.0),
+                humidity=data.get('humidity'),
+                pressure=data.get('pressure'),
+                source=data.get('source', 'user'),
+                confidence=data.get('confidence', 1.0),
+                notes=data.get('notes')
+            )
+            
+            db.session.add(calibration)
+            db.session.commit()
+            
+            return jsonify({
+                'success': True,
+                'message': 'Калибровочные данные добавлены',
+                'calibration': calibration.to_dict()
+            })
+            
+        except Exception as e:
+            return jsonify({'error': str(e)}), 500
+    
+    @app.route('/api/calibration/<note>')
+    def get_calibrations(note):
+        try:
+            if not MODELS_LOADED:
+                return jsonify({'calibrations': [], 'count': 0})
+            
+            calibrations = CalibrationData.query.filter_by(note=note).all()
+            return jsonify({
+                'note': note,
+                'calibrations': [c.to_dict() for c in calibrations],
+                'count': len(calibrations)
+            })
+        except Exception as e:
+            return jsonify({'error': str(e)}), 500
+    
+    @app.route('/api/calibration/similar')
+    def get_similar_calibrations():
+        try:
+            if not MODELS_LOADED:
+                return jsonify({'calibrations': [], 'count': 0})
+            
+            tube_diameter = float(request.args.get('diameter', 20.0))
+            tube_length = float(request.args.get('length', 450.0))
+            note = request.args.get('note', '')
+            tolerance = float(request.args.get('tolerance', 0.1))  # 10%
+            
+            # Получаем все калибровки для данной ноты
+            calibrations = CalibrationData.query.filter_by(note=note).all()
+            
+            # Фильтруем по схожести параметров
+            similar = []
+            for cal in calibrations:
+                if cal.tube_diameter and cal.tube_length:
+                    diameter_diff = abs(cal.tube_diameter - tube_diameter) / tube_diameter
+                    length_diff = abs(cal.tube_length - tube_length) / tube_length
+                    
+                    if diameter_diff <= tolerance and length_diff <= tolerance:
+                        similarity = 1.0 - max(diameter_diff, length_diff) / tolerance
+                        cal_dict = cal.to_dict()
+                        cal_dict['similarity'] = round(similarity, 2)
+                        similar.append(cal_dict)
+            
+            # Сортируем по схожести
+            similar.sort(key=lambda x: x['similarity'], reverse=True)
+            
+            return jsonify({
+                'note': note,
+                'tube_diameter': tube_diameter,
+                'tube_length': tube_length,
+                'calibrations': similar,
+                'count': len(similar)
+            })
+            
         except Exception as e:
             return jsonify({'error': str(e)}), 500
     
@@ -392,7 +558,7 @@ def register_routes(app):
     
     @app.route('/api/calculate/advanced', methods=['POST'])
     def calculate_advanced():
-        """Расчет позиций через калькулятор"""
+        """Расчет позиций через калькулятор с учетом компонентов"""
         try:
             data = request.json
             
@@ -407,6 +573,10 @@ def register_routes(app):
             tube_length = float(data['tube_length'])
             tube_diameter = float(data['tube_diameter'])
             tube_material = data.get('tube_material', 'pvc')
+            
+            # Получаем параметры компонентов если они указаны
+            mouthpiece_delta_m = data.get('mouthpiece_delta_m')
+            bell_delta_L = data.get('bell_delta_L')
             
             # Проверяем, есть ли калькулятор
             if CALCULATOR_LOADED:
@@ -476,29 +646,19 @@ def register_routes(app):
                 
                 position = tube_length * base_ratio
                 
-                # Ищем проверенные данные
+                # Ищем проверенные данные в калибровках
                 is_verified = False
                 source = 'calculated'
                 
                 if MODELS_LOADED:
-                    similar_flutes = Flute.query.filter(
-                        Flute.is_verified == True,
-                        Flute.tube_length.between(tube_length * 0.9, tube_length * 1.1)
-                    ).all()
-                    
-                    for flute in similar_flutes:
-                        try:
-                            flute_holes = json.loads(flute.holes_data) if flute.holes_data else []
-                            for hole in flute_holes:
-                                if hole.get('note') == note:
-                                    flute_tube = Tube.query.get(flute.tube_id)
-                                    if flute_tube and abs(flute_tube.inner_diameter - tube_diameter) < 2.0:
-                                        position = hole.get('position', position)
-                                        is_verified = True
-                                        source = 'calibrated'
-                                        break
-                        except:
-                            continue
+                    # Ищем в калибровочных данных
+                    similar_calibrations = CalibrationData.query.filter_by(note=note).all()
+                    for cal in similar_calibrations:
+                        if cal.tube_diameter and abs(cal.tube_diameter - tube_diameter) < 2.0:
+                            position = cal.position
+                            is_verified = True
+                            source = 'calibrated'
+                            break
                 
                 holes.append({
                     'note': note,
@@ -556,27 +716,20 @@ def register_routes(app):
             # Ищем похожие калибровки
             similar_calibrations = []
             if MODELS_LOADED:
-                verified_flutes = Flute.query.filter(Flute.is_verified == True).all()
-                for flute in verified_flutes:
-                    try:
-                        flute_holes = json.loads(flute.holes_data) if flute.holes_data else []
-                        for hole in flute_holes:
-                            if hole.get('note') == note:
-                                flute_tube = Tube.query.get(flute.tube_id)
-                                if flute_tube:
-                                    diameter_diff = abs(flute_tube.inner_diameter - tube_diameter)
-                                    length_diff = abs(flute.tube_length - tube_length)
-                                    similarity = 1.0 - (diameter_diff / tube_diameter + length_diff / tube_length) / 2
-                                    
-                                    similar_calibrations.append({
-                                        'position': hole.get('position'),
-                                        'tube_diameter': flute_tube.inner_diameter,
-                                        'tube_length': flute.tube_length,
-                                        'similarity': round(similarity, 2),
-                                        'flute_name': flute.name
-                                    })
-                    except:
-                        continue
+                calibrations = CalibrationData.query.filter_by(note=note).all()
+                for cal in calibrations:
+                    if cal.tube_diameter and cal.tube_length:
+                        diameter_diff = abs(cal.tube_diameter - tube_diameter) / tube_diameter
+                        length_diff = abs(cal.tube_length - tube_length) / tube_length
+                        similarity = 1.0 - max(diameter_diff, length_diff)
+                        
+                        similar_calibrations.append({
+                            'position': cal.position,
+                            'tube_diameter': cal.tube_diameter,
+                            'tube_length': cal.tube_length,
+                            'similarity': round(similarity, 2),
+                            'source': cal.source
+                        })
             
             # Определяем источник
             is_verified = False
@@ -614,34 +767,57 @@ def register_routes(app):
             tube_length = float(request.args.get('length', 450.0))
             
             similar_calibrations = []
-            verified_flutes = Flute.query.filter(Flute.is_verified == True).all()
+            calibrations = CalibrationData.query.filter_by(note=note).all()
             
-            for flute in verified_flutes:
-                try:
-                    flute_holes = json.loads(flute.holes_data) if flute.holes_data else []
-                    for hole in flute_holes:
-                        if hole.get('note') == note:
-                            flute_tube = Tube.query.get(flute.tube_id)
-                            if flute_tube:
-                                diameter_diff = abs(flute_tube.inner_diameter - tube_diameter) / tube_diameter
-                                length_diff = abs(flute.tube_length - tube_length) / tube_length
-                                similarity = 1.0 - max(diameter_diff, length_diff)
-                                
-                                if similarity > 0.7:
-                                    similar_calibrations.append({
-                                        'position': hole.get('position'),
-                                        'tube_diameter': flute_tube.inner_diameter,
-                                        'tube_length': flute.tube_length,
-                                        'similarity': round(similarity, 2),
-                                        'flute_name': flute.name
-                                    })
-                except:
-                    continue
+            for cal in calibrations:
+                if cal.tube_diameter and cal.tube_length:
+                    diameter_diff = abs(cal.tube_diameter - tube_diameter) / tube_diameter
+                    length_diff = abs(cal.tube_length - tube_length) / tube_length
+                    similarity = 1.0 - max(diameter_diff, length_diff)
+                    
+                    if similarity > 0.7:
+                        similar_calibrations.append({
+                            'position': cal.position,
+                            'tube_diameter': cal.tube_diameter,
+                            'tube_length': cal.tube_length,
+                            'similarity': round(similarity, 2),
+                            'source': cal.source
+                        })
             
             return jsonify({
                 'note': note,
                 'similar_calibrations': similar_calibrations,
                 'count': len(similar_calibrations)
+            })
+            
+        except Exception as e:
+            return jsonify({'error': str(e)}), 500
+    
+    # ========== РАСЧЕТ АКУСТИЧЕСКИХ ПАРАМЕТРОВ ==========
+    
+    @app.route('/api/acoustic/effective-length', methods=['POST'])
+    def calculate_effective_length():
+        """Расчет общей эффективной длины системы"""
+        try:
+            data = request.json
+            
+            tube_length = float(data.get('tube_length', 450.0))
+            mouthpiece_delta_m = float(data.get('mouthpiece_delta_m', 0.0))
+            bell_delta_L = float(data.get('bell_delta_L', 0.0))
+            v_sound = float(data.get('v_sound', 34300.0))
+            
+            # Формула: L_eff_total = L_tube + 2*δ_m + ΔL_bell
+            total_effective_length = tube_length + 2 * mouthpiece_delta_m + bell_delta_L
+            
+            # Базовая частота: f_base = v / (2 * L_eff_total)
+            f_base = v_sound / (2 * total_effective_length)  # в Гц
+            
+            return jsonify({
+                'success': True,
+                'total_effective_length': round(total_effective_length, 2),
+                'base_frequency': round(f_base, 2),
+                'formula': 'L_eff_total = L_tube + 2*δ_m + ΔL_bell',
+                'v_sound': v_sound
             })
             
         except Exception as e:
@@ -693,6 +869,7 @@ def register_routes(app):
             mp_count = Mouthpiece.query.count()
             tube_count = Tube.query.count()
             bell_count = Bell.query.count()
+            cal_count = CalibrationData.query.count()
             
             return jsonify({
                 'status': 'running',
@@ -704,7 +881,8 @@ def register_routes(app):
                         'tubes': tube_count,
                         'bells': bell_count,
                         'flutes': flute_count,
-                        'verified': verified_count
+                        'verified': verified_count,
+                        'calibrations': cal_count
                     }
                 }
             })
